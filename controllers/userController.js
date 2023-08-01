@@ -46,12 +46,14 @@ const userSignUp = async (req, res) => {
     // Assign the created token to the user's token field
     user.token = token
 
+    const message = `Please click on the link to verify your email: ${req.protocol}://${req.get("host")}/api/users/verify-email/${token}. This link expires in Thirty(30) minutes.`
+
     // send verification email
     const mailOptions = {
       from: process.env.SENDER_EMAIL,
       to: email,
       subject: "Verify your account",
-      html: `Please click on the link to verify your email: <a href="${req.protocol}://${req.get("host")}/api/users/verify-email/${token}">Verify Email</a>. This link expires in Thirty(30) minutes.`,
+      message,
     };
 
     await transporter.sendMail(mailOptions);
@@ -147,14 +149,16 @@ const resendVerificationEmail = async (req, res) => {
     }
 
     // create a token
-    const token = await jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "30 mins" });
+    const token =  jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "30 mins" });
+
+    const message = `Please click on the link to verify your email: ${req.protocol}://${req.get("host")}/api/users/verify-email/${token}. This link expires in Thirty(30) minutes.`
 
     // send verification email
     const mailOptions = {
       from: process.env.SENDER_EMAIL,
-      to: user.email,
-      subject: "Email Verification",
-      html: `Please click on the link to verify your email: <a href="${req.protocol}://${req.get("host")}/api/users/verify-email/${token}">Verify Email</a>. This link expires in Thirty(30) minutes.`,
+      to: email,
+      subject: "Verify your account",
+      message,
     };
 
     await transporter.sendMail(mailOptions);
@@ -185,14 +189,15 @@ const forgotPassword = async (req, res) => {
     }
 
     // Generate a reset token
-    const resetToken = await jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "30m" });
+    const resetToken =  jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "30m" });
 
+    const message = `Please click on the link to reset your password: ${req.protocol}://${req.get("host")}/api/users/reset-password/${resetToken}. This link expires in Thirty(30) minutes.`
     // Send reset password email
     const mailOptions = {
       from: process.env.SENDER_EMAIL,
       to: user.email,
       subject: "Password Reset",
-      html: `Please click on the link to reset your password: <a href="${req.protocol}://${req.get("host")}/api/users/reset-password/${resetToken}">Reset Password</a>. This link expires in Thirty(30) minutes.`,
+      message
     };
 
     await transporter.sendMail(mailOptions);
