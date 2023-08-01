@@ -1,13 +1,9 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-    firstName: {
+    fullName: {
         type: String,
-        required: true['firstName is required'],
-    },
-    lastName: {
-        type: String,
-        required: true['lastName is required'],
+        required: true['Fullname is required'],
     },
     email: {
         type: String,
@@ -15,14 +11,25 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
     phoneNumber: {
-        type: Number,
-        required: true['Password is required'],
+        type: String,
+        required: true['Phone number is required'],
     },
     password: {
         type: String,
         required: true['Password is required'],
     },
-    
+    cashBack: { 
+        type: Number, 
+        default: 0 
+    }, 
+    cashBackToggle: { 
+        type: Boolean, 
+        default: false 
+    }, 
+    orders: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Order' 
+    }],
     isVerified: {
         type: Boolean,
         default: false
@@ -38,7 +45,7 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     }
-}, {timestamps: true});
+}, { timestamps: true });
 
 
 const userModel = mongoose.model('Users', userSchema);
