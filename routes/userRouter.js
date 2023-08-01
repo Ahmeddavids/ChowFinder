@@ -4,7 +4,7 @@ const { userSignUp, userLogin,  signOut, verifyEmail, resendVerificationEmail, f
 const router = require('express').Router();
 
 router.route('/api').get((req, res) => {
-    res.json('WELCOME TO MY AUTHENTICATION API HOMEPAGE')
+    res.json('WELCOME TO CHOW FINDER')
 })
 
 router.route('/sign-up').post(userSignUp)
