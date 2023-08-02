@@ -1,5 +1,5 @@
 const { checkUser, superAuth, authenticate } = require('../middleware/authorization');
-const { userSignUp, userLogin,  signOut, verifyEmail, resendVerificationEmail, forgotPassword, changePassword, resetPassword } = require('../controllers/userController');
+const { userSignUp, userLogin,  signOut, verifyEmail, resendVerificationEmail, forgotPassword, changePassword, resetPassword, updateUser, deleteUser } = require('../controllers/userController');
 
 const router = require('express').Router();
 
@@ -28,7 +28,14 @@ router.route('/users/reset-password/:token')
 router.route('/users/forgot-password')
 .post(forgotPassword);
 
-// router.route('/delete-self/:userId').delete(authenticate, deleteUser)
+router.route('/users/update/:userId')
+.patch(authenticate, updateUser)
+
+router.route('/users/delete-self/:userId')
+.delete(authenticate, deleteUser)
+
+router.route('/add-to-cart')
+.post(authenticate)
 
 
 

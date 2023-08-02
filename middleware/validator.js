@@ -1,34 +1,30 @@
-const validator = require('validator')
-
+const validator = require('validator');
 
 const validateEmailAndPhone = (email, phoneNumber, fullName) => {
-    if (!validator.isEmail(email)) {
-        return {
-            isValid: false,
-            message: 'Invalid Email Format'
-        };
-    }
+  const errors = [];
 
-    if (!validator.isNumeric(phoneNumber) || !validator.isLength(phoneNumber, { min: 11, max: 11 })) {
-        return {
-            isValid: false,
-            message: 'Invalid Number Format'
-        };
-    }
+  if (email && !validator.isEmail(email)) {
+    errors.push('Invalid Email Format');
+  }
 
-    const stringPattern = /^[A-Za-z ]+$/;
+  if (phoneNumber && (!validator.isNumeric(phoneNumber) || !validator.isLength(phoneNumber, { min: 11, max: 11 }))) {
+    errors.push('Invalid Number Format');
+  }
 
-    if (!stringPattern.test(fullName)) {
-        return {
-            isValid: false,
-            message: 'Invalid Name Format. Only letters and spaces are allowed.'
-        };
-    }
+  if (fullName && !validator.matches(fullName, /^[A-Za-z ]+$/)) {
+    errors.push('Invalid Name Format. Only letters and spaces are allowed.');
+  }
 
+  if (errors.length > 0) {
     return {
-        isValid: true
+      isValid: false,
+      message: errors.join(', ')
     };
+  }
+
+  return {
+    isValid: true
+  };
 };
 
-
-module.exports = validateEmailAndPhone
+module.exports = validateEmailAndPhone;

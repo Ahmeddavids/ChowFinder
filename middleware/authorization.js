@@ -9,7 +9,7 @@ const authentication = async (req, res, next) => {
 
         if(!user) {
             return res.status(400).json({
-                message: 'Admin to authorize not found'
+                message: 'Admin Authentication Failed: Admin not found'
             })
         }
 
@@ -17,7 +17,7 @@ const authentication = async (req, res, next) => {
 
         if(!userToken) {
             return res.status(400).json({
-                message: 'Token not found'
+                message: 'Admin Authentication Failed: Please sign in.'
             })
         }
 
@@ -47,14 +47,14 @@ const authenticate = async (req, res, next) => {
 
         if(!user) {
             return res.status(404).json({
-                message: 'User to authorize not found'
+                message: 'Authentication Failed: User not found'
             })
         }
         const userToken = user.token
 
         if(!userToken) {
             return res.status(400).json({
-                message: 'No Authorization found, please sign in again.'
+                message: 'Authentication Failed: Please sign in.'
             })
         }
 
@@ -75,24 +75,7 @@ const authenticate = async (req, res, next) => {
     }
 }
 
-
-// to check if user is an admin
-// const checkUser = (req, res, next) => {
-//     authentication(req, res, async () => {
-//         const adminId = req.params.id
-//         const user = await userModel.findById(adminId)
-//         if(user.isAdmin || user.isSuperAdmin) {
-//             next()
-//         } else {
-//             res.status(400).json({
-//                 message: 'You are not authorized to perform this action'
-//             })
-//         }
-//     })
-// }
-
-
-// Another method to authorize
+// Admin authorization
 const checkUser = (req, res, next) => {
     authentication(req, res, async () => {
         if(req.user.isAdmin || req.user.isSuperAdmin) {

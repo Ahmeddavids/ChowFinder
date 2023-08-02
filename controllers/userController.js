@@ -5,12 +5,14 @@ const jwt = require('jsonwebtoken');
 const transporter = require('../middleware/nodemailer');
 const validator = require('../middleware/validator');
 
-// USER ONBOARDING
+                                              // USER ONBOARDING
 
 // user sign up
 const userSignUp = async (req, res) => {
   try {
     const { fullName, phoneNumber, email, password } = req.body;
+    const protocol = req.protocol;
+    const host = req.get("host");
 
     const validation = validator(email, phoneNumber, fullName);
     if (!validation.isValid) {
@@ -27,7 +29,7 @@ const userSignUp = async (req, res) => {
     }
 
     // salt the password using bcrypt
-    const salt = bcrypt.genSaltSync(10)
+    const salt = bcrypt.genSaltSync(12)
     // hash the salted password using bcrypt
     const hashedPassword = bcrypt.hashSync(password, salt)
     const data = {
@@ -46,14 +48,14 @@ const userSignUp = async (req, res) => {
     // Assign the created token to the user's token field
     user.token = token
 
-    const message = `Please click on the link to verify your email: ${req.protocol}://${req.get("host")}/api/users/verify-email/${token}. This link expires in Thirty(30) minutes.`
+    const message = `Please click on the link to verify your email: ${protocol}://${host}/api/users/verify-email/${token}. This link expires in One(1) hour.`
 
     // send verification email
     const mailOptions = {
       from: process.env.SENDER_EMAIL,
       to: email,
       subject: "Verify your account",
-      message,
+      html: message,
     };
 
     await transporter.sendMail(mailOptions);
@@ -149,7 +151,7 @@ const resendVerificationEmail = async (req, res) => {
     }
 
     // create a token
-    const token =  jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "30 mins" });
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "30 mins" });
 
     const message = `Please click on the link to verify your email: ${req.protocol}://${req.get("host")}/api/users/verify-email/${token}. This link expires in Thirty(30) minutes.`
 
@@ -189,7 +191,7 @@ const forgotPassword = async (req, res) => {
     }
 
     // Generate a reset token
-    const resetToken =  jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "30m" });
+    const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "30m" });
 
     const message = `Please click on the link to reset your password: ${req.protocol}://${req.get("host")}/api/users/reset-password/${resetToken}. This link expires in Thirty(30) minutes.`
     // Send reset password email
@@ -386,10 +388,92 @@ const signOut = async (req, res) => {
   }
 };
 
-// USER CRUD
+                                            // USER CRUD
+
+
+// Update User
+const updateUser = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { fullName, email, phoneNumber } = req.body;
+
+    const validation = validator(email, phoneNumber, fullName);
+    if (!validation.isValid) {
+      return res.status(400).json({
+        message: validation.message
+      });
+    }
+
+    const user = await userModel.findById(userId)
+
+    if (!user) {
+      return res.status(200).json({
+        message: `User with id: ${userId} not found`,
+      })
+    }
+
+    
+    // Construct the data object based on the fields present in the request body
+    const data = {};
+
+    if (fullName) {
+      data.fullName = fullName.toUpperCase();
+    }
+
+    if (phoneNumber) {
+      data.phoneNumber = phoneNumber;
+    }
+
+    if (email) {
+      data.email = email.toLowerCase();
+      const emailExists = await userModel.findOne({ email: email.toLowerCase() })
+  
+      if (emailExists && emailExists._id.toString() !== userId) {
+        return res.status(400).json({
+          message: `Email already exists.`
+        })
+      }
+    }
+    
+    const update = await userModel.findByIdAndUpdate(userId, data, { new: true })
+
+    res.status(200).json({
+      message: 'User updated successfully',
+      data: update
+    })
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({
+      Error: error.message
+    })
+  }
+}
 
 
 
+// Delete user
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.user.userId
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(200).json({
+        message: `User with id: ${userId} not found`,
+      })
+    }
+    const deletedUser = await userModel.findByIdAndDelete(userId)
+    res.status(200).json({
+      message: 'User deleted successfully',
+
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      Error: error.message
+    })
+  }
+}
 
 module.exports = {
   userSignUp,
@@ -399,5 +483,7 @@ module.exports = {
   resendVerificationEmail,
   forgotPassword,
   changePassword,
-  resetPassword
+  resetPassword,
+  updateUser,
+  deleteUser
 }
