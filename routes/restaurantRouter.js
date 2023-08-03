@@ -12,6 +12,7 @@ const {
   updaterestaurant,
   deleterestaurant,
   addProfileImage,
+  searchlocation
 } = require("../controllers/restaurantController");
 
 const { isAdmin, userAuth } = require("../middleware/authmiddleware");
@@ -22,11 +23,12 @@ router.post("/rest/signup", newrestaurant);
 router.put("/rest/verify/:token", restaurantVerify);
 router.post("/rest/signin", signin);
 router.get("/rest/logout", userAuth, logout);
-router.get("/rest/getall", userAuth, getAll);
+router.get("/rest/getall", getAll);
 router.put("/rest/update-user/:restaurantId", userAuth, updaterestaurant);
 router.delete("/rest/delete-user/:userId", userAuth, deleterestaurant);
 router.put("/rest/add-profile-image",userAuth,upload.single("profilePicture"),addProfileImage);
 router.get("/rest/forgot-password", forgotPassword);
 router.get("/rest/resend-email-verification", resendEmailVerification);
 router.put("/rest/reset-password/:token", resetpassword);
+router.get("/rest/make",searchlocation)
 module.exports = router;
