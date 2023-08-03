@@ -40,4 +40,16 @@ const isAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = { userAuth, isAdmin };
+const isRole = async (req, res, next) => {
+  try {
+    if (req.user.role==="admin") {
+      next();
+    } else {
+      res.status(401).json({ message: " not an admin" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { userAuth, isAdmin,isRole };
