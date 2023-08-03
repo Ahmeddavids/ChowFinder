@@ -1,0 +1,32 @@
+const express = require("express");
+const upload = require("../middleware/uploader");
+const {
+  newrestaurant,
+  restaurantVerify,
+  signin,
+  logout,
+  getAll,
+  forgotPassword,
+  resetpassword,
+  resendEmailVerification,
+  updaterestaurant,
+  deleterestaurant,
+  addProfileImage,
+} = require("../controllers/restaurantController");
+
+const { isAdmin, userAuth } = require("../middleware/authmiddleware");
+const router = express.Router();
+
+router.post("/rest/signup", newrestaurant);
+
+router.put("/rest/verify/:token", restaurantVerify);
+router.post("/rest/signin", signin);
+router.get("/rest/logout", userAuth, logout);
+router.get("/rest/getall", userAuth, getAll);
+router.put("/rest/update-user/:restaurantId", userAuth, updaterestaurant);
+router.delete("/rest/delete-user/:userId", userAuth, deleterestaurant);
+router.put("/rest/add-profile-image",userAuth,upload.single("profilePicture"),addProfileImage);
+router.get("/rest/forgot-password", forgotPassword);
+router.get("/rest/resend-email-verification", resendEmailVerification);
+router.put("/rest/reset-password/:token", resetpassword);
+module.exports = router;

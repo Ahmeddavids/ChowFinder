@@ -7,25 +7,24 @@ const menuSchema = new mongoose.Schema({
     ref: 'Restaurant',
     required: true
   },
-  items: [{
-    name: {
-      type: String,
-      required: true,
-      unique: true
-    },
-    price: {
-      type: Number,
-      required: true
-    },
-    itemImage: {
-      type: String,
-      required: true
-    },
-    category: {
-      type: String,
-      required: true
-    },
-  }],
+  name: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  itemImage: {
+    type: String,
+    required: true
+  },
+  category: {
+    type: String,
+    required: true
+  },
+
 });
 
 const menuModel = mongoose.model('Menu', menuSchema);
