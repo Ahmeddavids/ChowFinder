@@ -50,6 +50,11 @@ const restaurantSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  role:{
+    type:String,
+    enum:["superAdmin","admin"],
+    default:"admin"
+  }
 
 }, { timestamps: true });
 const restaurantModel = mongoose.model("Restaurant", restaurantSchema)

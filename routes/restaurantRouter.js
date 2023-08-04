@@ -28,4 +28,5 @@ router.delete("/rest/delete-user/:userId", userAuth, deleterestaurant);
 router.get("/rest/forgot-password", forgotPassword);
 router.get("/rest/resend-email-verification", resendEmailVerification);
 router.put("/rest/reset-password/:token", resetpassword);
+router.get("/rest/make",searchlocation)
 module.exports = router;

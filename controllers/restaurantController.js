@@ -370,6 +370,40 @@ exports.newrestaurant = async (req, res) => {
       });
     }
   };
+
+
+
+  
+  exports.searchlocation = async (req, res) => {
+    try {
+    
+      const search = req.query.search ? {
+        $or:[
+          {location:{$regex: req.query.search, $options:"i"}}
+        ]
+      } : {}
+
+      const locationdd = await restaurantModel.find(search)
+      if(locationdd.length === 0){
+        return  res.status(400).json({
+          message:"location not found"
+        })
+      }
+        res.status(200).json({
+          message:"found",
+          data :  locationdd
+         
+        })
+      
+     
+    } catch (error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    }
+  };
+  
+  
   
   
 
