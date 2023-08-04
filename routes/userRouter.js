@@ -21,7 +21,7 @@ router.route( "/users/verify-email/:token" )
     .get( verifyEmail );
 
 router.route( "/users/resend-verification-email" )
-    .post( resendVerificationEmail );
+    .post(validationUpdate,  resendVerificationEmail );
     
 router.route('/users/change-password/:token')
 .post(validationPassword, changePassword);
@@ -30,7 +30,7 @@ router.route('/users/reset-password/:token')
 .post(validationPassword, resetPassword);
 
 router.route('/users/forgot-password')
-.post(forgotPassword);
+.post(validationUpdate, forgotPassword);
 
 router.route('/users/update/:userId')
 .patch(authenticate,validationUpdate, updateUser)
