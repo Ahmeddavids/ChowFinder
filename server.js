@@ -5,16 +5,20 @@ const menuRouter = require('./routes/menuRouter')
 const restaurantrouter = require('./routes/restaurantRouter')
 const locationRouter = require('./routes/locationRouter')
 const fileUpload = require("express-fileupload");
-const cors = require('cors')
+const cors = require('cors');
+const morgan = require("morgan");
+
 
 const PORT = 1800;
 
 const app = express();
+app.use(morgan("dev"))
 app.use(express.json());
 app.use(fileUpload({
     useTempFiles: true
 }));
 app.use(cors({origin: "*"}));
+
 
 app.use('/api', userRouter);
 app.use('/api', menuRouter);
