@@ -11,8 +11,7 @@ exports.newrestaurant = async (req, res) => {
     try {
       const { 
         businessName,
-        address,
-        location, 
+        address, 
         email,  
         phoneNumber, 
         password,
@@ -32,8 +31,7 @@ exports.newrestaurant = async (req, res) => {
 
           const restaurant = await restaurantModel.create({
         businessName: businessName.toUpperCase(),
-        address,
-        location, 
+        address, 
         email: email.toLowerCase(),  
         phoneNumber, 
         password:hash,
@@ -253,8 +251,11 @@ exports.newrestaurant = async (req, res) => {
         res.status(200).json({
             restaurant
         });
+      } else {
+        res.status(404).json({
+            message: 'Restaurant not found'
+        })
       }
-    //   res.json({ users });
     } catch (error) {
       res.status(500).json({
         message: error.message,
@@ -271,7 +272,11 @@ exports.newrestaurant = async (req, res) => {
             restaurant
         })
       }
-    //   res.json({ user });
+      else {
+        res.status(404).json({
+            message: 'Restaurant not found'
+        })
+      }
     } catch (error) {
       res.status(500).json({
         message: error.message,
@@ -283,73 +288,55 @@ exports.newrestaurant = async (req, res) => {
     try {
       const { restaurantId } = req.params;
       const { 
-        businessName, email, address , location} = req.body;
+        businessName, 
+        email, 
+        address,
+        location
+      } = req.body;
+  
       const restaurant = await restaurantModel.findById(restaurantId);
-      //console.log(req.user._id.toString());
-     // console.log(user.id);
       if (!restaurant) {
-        res.status(404).json({ message: "no restaurant found" });
-      } else  {
-        const updatedUser = await restaurantModel.findByIdAndUpdate(
-            restaurantId,
+        return res.status(404).json({ message: "No restaurant found" });
+      } 
+  
+      if (req.files && req.files.profileImage) {
+        const file = req.files.profileImage;
+  
+        // Upload the profile image to Cloudinary
+        const result = await cloudinary.uploader.upload(file.tempFilePath);
+  
+        // Delete the existing profile image if it exists
+        if (restaurant.profileImage) {
+          const publicId = restaurant.profileImage
+            .split("/")
+            .pop()
+            .split(".")[0];
+          await cloudinary.uploader.destroy(publicId);
+        }
+  
+        // Update the restaurant with the new profile image URL and other fields
+        const updatedRestaurant = await restaurantModel.findByIdAndUpdate(
+          restaurantId,
+          {
+            businessName,
+            email,
+            address,
+            location,
+            profileImage: result.secure_url,
+          },
+          { new: true }
+        );
+  
+        res.status(200).json({ message: "Restaurant updated", updatedRestaurant });
+      } else {
+        // Update the restaurant without changing the profile image
+        const updatedRestaurant = await restaurantModel.findByIdAndUpdate(
+          restaurantId,
           { businessName, email, address, location },
           { new: true }
         );
   
-        res.status(200).json({ message: "restaurant updated", updatedUser });
-      } 
-      //else {
-    //     res
-    //       .status(401)
-    //       .json({ messgae: "you are not authorized to update this user" });
-    //   }
-    } catch (error) {
-      res.status(500).json({
-        message: error.message,
-      });
-    }
-  };
-  
-  //add profile picture
-  // update profile
-  exports.addProfileImage = async (req, res) => {
-    const { restaurantId } = req.body;
-    try {
-      const profile = await restaurantModel.findById(restaurantId);
-      if (profile) {
-        console.log(req.file);
-        let result = null;
-        // Delete the existing image from local upload folder and Cloudinary
-        if (req.file) {
-          if (profile.profileImage) {
-            const publicId = profile.profileImage
-              .split("/")
-              .pop()
-              .split(".")[0];
-            console.log(publicId);
-            await cloudinary.uploader.destroy(publicId);
-          }
-          result = await cloudinary.uploader.upload(req.file.path);
-          // Delete file from local upload folder
-          fs.unlinkSync(req.file.path);
-          profile.set({
-            profileImage: result.secure_url,
-          });
-          await profile.save();
-  
-          const updated = await restaurantModel.findById(userId);
-  
-          res.json({ message: "profile updated successfully",
-          data: updated });
-        } else {
-          res.status(400).json({ 
-            message: "no profile picture added" 
-        });
-        }
-      } else {
-        res.status(404).json({
-             message: "profile not found" 
-            });
+        res.status(200).json({ message: "Restaurant updated", updatedRestaurant });
       }
     } catch (error) {
       res.status(500).json({

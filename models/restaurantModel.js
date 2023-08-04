@@ -10,8 +10,8 @@ const restaurantSchema = new mongoose.Schema({
     require: true
   },
   location: {
-    type: String,
-    require: true
+    type: mongoose.Types.ObjectId,
+    ref: "Location",
   },
   email: {
     type: String,

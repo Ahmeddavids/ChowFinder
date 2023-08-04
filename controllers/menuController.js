@@ -19,7 +19,7 @@ const createMenu = async (req, res) => {
         });
       }
   
-      const image = req.files.itemImage.tempFilePath; // The file path of the uploaded image
+      const image = req.files.itemImage.tempFilePath; 
   
       // Upload the image to Cloudinary
       const imageResult = await cloudinary.uploader.upload(image);
@@ -30,7 +30,7 @@ const createMenu = async (req, res) => {
             name,
             price,
             category,
-            itemImage: imageResult.secure_url, // Use the secure URL from Cloudinary
+            itemImage: imageResult.secure_url, 
         
       });
   
@@ -116,7 +116,7 @@ const updateMenu = async (req, res) => {
 const deleteMenu = async (req,res)=>{
     try{
         await cloudinary.destroy(itemImage)
-        const menu =await menyModel.findByIdAndDelete()
+        const menu =await menuModel.findByIdAndDelete()
         if(!menu){
             res.status(404).json({
                 message:"menu not found"

@@ -2,8 +2,8 @@ require('dotenv').config();
 const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const transporter = require('../middleware/nodemailer');
-const validator = require('../middleware/validator');
+const { mailTemplate } = require('../middleware/mailTemplate');
+const { sendEmail } = require('../middleware/sendMail');
 
                                               // USER ONBOARDING
 
@@ -11,15 +11,7 @@ const validator = require('../middleware/validator');
 const userSignUp = async (req, res) => {
   try {
     const { fullName, phoneNumber, email, password } = req.body;
-    const protocol = req.protocol;
-    const host = req.get("host");
 
-    const validation = validator(email, phoneNumber, fullName);
-    if (!validation.isValid) {
-      return res.status(400).json({
-        message: validation.message
-      });
-    }
     const emailExists = await userModel.findOne({ email });
 
     if (emailExists) {
@@ -48,17 +40,17 @@ const userSignUp = async (req, res) => {
     // Assign the created token to the user's token field
     user.token = token
 
-    const message = `Please click on the link to verify your email: ${protocol}://${host}/api/users/verify-email/${token}. This link expires in One(1) hour.`
-
-    // send verification email
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
-      to: email,
-      subject: "Verify your account",
-      html: message,
+    const protocol = req.protocol;
+    const host = req.get("host");
+    const subject = "Email Verification";
+    const link = `${protocol}://${host}/api/users/verify-email/${token}`;
+    const html = await mailTemplate(link);
+    const mail = {
+      email: email,
+      subject,
+      html,
     };
-
-    await transporter.sendMail(mailOptions);
+    sendEmail(mail);
 
     // save the user
     const savedUser = await user.save();
@@ -153,17 +145,17 @@ const resendVerificationEmail = async (req, res) => {
     // create a token
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "30 mins" });
 
-    const message = `Please click on the link to verify your email: ${req.protocol}://${req.get("host")}/api/users/verify-email/${token}. This link expires in Thirty(30) minutes.`
-
-    // send verification email
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
-      to: email,
-      subject: "Verify your account",
-      message,
+    const protocol = req.protocol;
+    const host = req.get("host");
+    const subject = "Email Verification";
+    const link = `${protocol}://${host}/api/users/verify-email/${token}`;
+    const html = await mailTemplate(link);
+    const mail = {
+      email: email,
+      subject,
+      html,
     };
-
-    await transporter.sendMail(mailOptions);
+    sendEmail(mail);
 
     res.status(200).json({
       message: `Verification email sent successfully to your email: ${user.email}`
@@ -193,17 +185,18 @@ const forgotPassword = async (req, res) => {
     // Generate a reset token
     const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "30m" });
 
-    const message = `Please click on the link to reset your password: ${req.protocol}://${req.get("host")}/api/users/reset-password/${resetToken}. This link expires in Thirty(30) minutes.`
-    // Send reset password email
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
-      to: user.email,
-      subject: "Password Reset",
-      message
+    const protocol = req.protocol;
+    const host = req.get("host");
+    const subject = "Email Verification";
+    const link = `${protocol}://${host}/api/users/reset-password/${token}`;
+    const html = await mailTemplate(link);
+    const mail = {
+      email: email,
+      subject,
+      html,
     };
-
-    await transporter.sendMail(mailOptions);
-
+    sendEmail(mail);
+    
     res.status(200).json({
       message: "Password reset email sent successfully"
     });
@@ -397,13 +390,6 @@ const updateUser = async (req, res) => {
     const { userId } = req.user;
     const { fullName, email, phoneNumber } = req.body;
 
-    const validation = validator(email, phoneNumber, fullName);
-    if (!validation.isValid) {
-      return res.status(400).json({
-        message: validation.message
-      });
-    }
-
     const user = await userModel.findById(userId)
 
     if (!user) {
@@ -412,7 +398,6 @@ const updateUser = async (req, res) => {
       })
     }
 
-    
     // Construct the data object based on the fields present in the request body
     const data = {};
 

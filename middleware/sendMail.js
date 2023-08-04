@@ -26,7 +26,7 @@ const sendEmail = async (options) => {
       from: process.env.MAIL_ID,
       to: options.email,
       subject: options.subject,
-      text: options.message,
+      html: options.html,
     });
 
     console.log("Message sent: %s", info.messageId);
@@ -35,28 +35,5 @@ const sendEmail = async (options) => {
   main().catch(console.error);
 };
 
-// const sendEmail = async (options) => {
-//   const transporter = nodemailer.createTransport({
-//     service: process.env.SERVICE,
-//     secure: false,
-//     auth: {
-//       user: process.env.MAIL_ID,
-//       pass: process.env.MAIL_PASSWORD,
-//     },
-//   });
-//   const mailOptions = {
-//     from: process.env.MAIL_ID,
-//     to: options.email,
-//     subject: options.subject,
-//     text: options.message,
-//   };
-//   await transporter.sendMail(mailOptions, (err) => {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       console.log("message sent");
-//     }
-//   });
-// };
 
 module.exports = { sendEmail };
