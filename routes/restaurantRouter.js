@@ -6,6 +6,7 @@ const {
   signin,
   logout,
   getAll,
+  getOne,
   forgotPassword,
   resetpassword,
   resendEmailVerification,
