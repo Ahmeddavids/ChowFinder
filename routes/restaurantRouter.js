@@ -22,7 +22,7 @@ router.put("/rest/verify/:token", restaurantVerify);
 router.post("/rest/signin", signin);
 router.get("/rest/logout", userAuth, logout);
 router.get("/rest/getall", getAll);
-router.get("/rest/getone/:id", getAll);
+router.get("/rest/getone/:id", getOne);
 router.put("/rest/update-user/:restaurantId", userAuth, updaterestaurant);
 router.delete("/rest/delete-user/:userId", userAuth, deleterestaurant);
 router.get("/rest/forgot-password", forgotPassword);
