@@ -3,7 +3,7 @@ const { newLocation, getLocation, addLocation, getLocationByName, getAllLocation
 const router = express.Router();
 
 router.route('/locations').post(newLocation)
-router.route('/locations').get(getAllLocations)
+router.route('/locations/get-all').get(getAllLocations)
 router.route('/location/:locationId').get(getLocation)
 router.route('/location/').get(getLocationByName)
 router.route('/locations/:locationId').post(addLocation)
