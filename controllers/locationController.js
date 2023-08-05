@@ -19,7 +19,7 @@ exports.newLocation = async (req, res) => {
                 location.restaurants.push(restaurant._id);
             });
            
-            // foundRestaurants.location.push(location._id);
+            foundRestaurants.location = location._id;
             
         }
 
@@ -67,7 +67,7 @@ exports.getLocation = async (req, res) => {
 // Get all locations
 exports.getAllLocations = async (req, res) => {
     try {
-        const locations = await Location.find().populate('restaurants');
+        const locations = await Location.find();
 
         if (!locations.length === null) {
             return res.status(404).json({
