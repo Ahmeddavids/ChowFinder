@@ -67,7 +67,7 @@ exports.getLocation = async (req, res) => {
 // Get all locations
 exports.getAllLocations = async (req, res) => {
     try {
-        const locations = await Location.find();
+        const locations = await Location.find().populate('restaurants');
 
         if (!locations.length === null) {
             return res.status(404).json({
