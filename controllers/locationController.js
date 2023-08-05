@@ -4,24 +4,30 @@ const Restaurant = require('../models/restaurantModel')
 // Create new location
 exports.newLocation = async (req, res) => {
     try {
-        const { name, restaurantIds } = req.body;
+        const { name } = req.body;
+
+        if (!name) {
+            return res.status(400).json({
+                Error: 'Enter location name'
+            })
+        }
 
         // Create a new location
         const location = new Location({ name });
 
-        if (restaurantIds && restaurantIds.length > 0) {
-            // Find the restaurants based on the provided restaurantIds
-            const foundRestaurants = await Restaurant.find({ _id: { $in: restaurantIds } });
-            console.log(foundRestaurants)
+        // if (restaurantIds && restaurantIds.length > 0) {
+        //     // Find the restaurants based on the provided restaurantIds
+        //     const foundRestaurants = await Restaurant.find({ _id: { $in: restaurantIds } });
+        //     console.log(foundRestaurants)
 
-            // Push the new restaurant ObjectIds to the location's restaurants array
-            foundRestaurants.forEach((restaurant) => {
-                location.restaurants.push(restaurant._id);
-            });
+        //     // Push the new restaurant ObjectIds to the location's restaurants array
+        //     foundRestaurants.forEach((restaurant) => {
+        //         location.restaurants.push(restaurant._id);
+        //     });
            
-            foundRestaurants.location = location._id;
+        //     foundRestaurants.location = location._id;
             
-        }
+        // }
 
         // Save the location to the database
         await location.save();
