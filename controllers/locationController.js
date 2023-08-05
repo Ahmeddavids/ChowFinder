@@ -1,7 +1,7 @@
 const Location = require('../models/locationModel')
 const Restaurant = require('../models/restaurantModel')
 
-
+// Create new location
 exports.newLocation = async (req, res) => {
     try {
         const { name, restaurantIds } = req.body;
@@ -39,6 +39,7 @@ exports.newLocation = async (req, res) => {
     }
 }
 
+// Get one location
 exports.getLocation = async (req, res) => {
     try {
         const { locationId } = req.params;
@@ -62,6 +63,31 @@ exports.getLocation = async (req, res) => {
         });
     }
 }
+
+// Get all locations
+exports.getAllLocations = async (req, res) => {
+    try {
+        const locations = await Location.find().populate('restaurants');
+
+        if (!locations.length === null) {
+            return res.status(404).json({
+                message: `There are no locations found in this database`,
+            });
+        }
+
+        res.status(200).json({
+            message: `All locations successfully found, they are a total of ${locations.length}`,
+            data: locations,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            Error: error.message,
+        });
+    }
+}
+
+// Get one location by name
 exports.getLocationByName = async (req, res) => {
     try {
         const { locationName } = req.body;
@@ -86,7 +112,7 @@ exports.getLocationByName = async (req, res) => {
     }
 }
 
-
+// Add restaurant to a location
 exports.addLocation = async (req, res) => {
     try {
         const { locationId } = req.params;
