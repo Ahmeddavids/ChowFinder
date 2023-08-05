@@ -76,7 +76,6 @@ exports.getAllLocations = async (req, res) => {
         }
 
         res.status(200).json({
-            message: `All locations successfully found, they are a total of ${locations.length}`,
             data: locations,
         });
     } catch (error) {
