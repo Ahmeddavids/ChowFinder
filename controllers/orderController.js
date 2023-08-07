@@ -11,13 +11,13 @@ const placeOrder = async (req, res) => {
       const { userId } = req.user;
       const { restaurantId } = req.params;
   
-      // Fetch the user from the database
+      // Find the user from the database
       const user = await userModel.findById(userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
   
-      // Fetch the restaurant from the database
+      // Find the restaurant from the database
       const restaurant = await restaurantModel.findById(restaurantId);
       if (!restaurant) {
         return res.status(404).json({ message: 'Restaurant not found' });
@@ -29,7 +29,7 @@ const placeOrder = async (req, res) => {
         return res.status(404).json({ message: 'Cart not found or is empty' });
       }
   
-      // Fetch the menu from the database based on the restaurantId
+      // Find the menu from the database based on the restaurantId
       const menu = await menuModel.findOne({ restaurant: restaurantId });
       if (!menu) {
         return res.status(404).json({ message: 'Menu not found for this restaurant' });
@@ -66,6 +66,8 @@ const placeOrder = async (req, res) => {
   
       // Apply cash back to the current order
       const discountedTotal = total - cashBackToUse;
+
+      user.cashBack = user.cashBack - cashBackToUse;
   
       // Calculate cash back amount for the next order
       let cashBackAmount = 0;
@@ -94,6 +96,7 @@ const placeOrder = async (req, res) => {
       cart.total = 0;
       await cart.save();
   
+      user.cashBackToggle = false
       // Save the user changes to the database
       await user.save();
   
@@ -109,7 +112,7 @@ const placeOrder = async (req, res) => {
     try {
       const { userId } = req.user;
   
-      // Fetch the user from the database
+      // Find the user from the database
       const user = await userModel.findById(userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });

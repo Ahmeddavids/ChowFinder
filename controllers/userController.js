@@ -2,7 +2,7 @@ require('dotenv').config();
 const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { mailTemplate } = require('../middleware/mailTemplate');
+const { mailTemplate, forgotMailTemplate } = require('../middleware/mailTemplate');
 const { sendEmail } = require('../middleware/sendMail');
 
                                               // USER ONBOARDING
@@ -44,7 +44,7 @@ const userSignUp = async (req, res) => {
     const host = req.get("host");
     const subject = "Email Verification";
     const link = `${protocol}://${host}/api/users/verify-email/${token}`;
-    const html = await mailTemplate(link);
+    const html = await mailTemplate(link, user.fullName);
     const mail = {
       email: email,
       subject,
@@ -187,9 +187,9 @@ const forgotPassword = async (req, res) => {
 
     const protocol = req.protocol;
     const host = req.get("host");
-    const subject = "Email Verification";
-    const link = `${protocol}://${host}/api/users/reset-password/${token}`;
-    const html = await mailTemplate(link);
+    const subject = "Password Reset";
+    const link = `${protocol}://${host}/api/users/reset-password/${resetToken}`;
+    const html = await forgotMailTemplate(link, user.fullName);
     const mail = {
       email: email,
       subject,

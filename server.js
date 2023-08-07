@@ -4,6 +4,7 @@ const userRouter = require('./routes/userRouter');
 const menuRouter = require('./routes/menuRouter')
 const restaurantrouter = require('./routes/restaurantRouter')
 const locationRouter = require('./routes/locationRouter')
+const categoryRouter = require('./routes/categoryRouter')
 const fileUpload = require("express-fileupload");
 const cors = require('cors');
 const morgan = require("morgan");
@@ -24,6 +25,7 @@ app.use('/api', userRouter);
 app.use('/api', menuRouter);
 app.use('/api', restaurantrouter);
 app.use('/api', locationRouter);
+app.use('/api', categoryRouter)
 
 
 app.listen(PORT, () => {

@@ -2,13 +2,14 @@ const menuModel = require("../models/menuModel")
 const restaurantModel = require("../models/restaurantModel")
 const mongoose = require("mongoose");
 const cloudinary = require("../middleware/cloudinary");
+const categoryModel = require('../models/categoryModel')
 
 
 
 const createMenu = async (req, res) => {
     try {
-      const { name, price, category } = req.body;
-      if (!name || !price || !category) {
+      const { name, price, } = req.body;
+      if (!name || !price ) {
         return res.status(400).json({ message: "Please enter all fields" });
       }
   
@@ -16,6 +17,13 @@ const createMenu = async (req, res) => {
       if (!findRestaurant) {
         return res.status(401).json({
           message: "Restaurant not found",
+        });
+      }
+
+      const category = await categoryModel.findById(req.params.categoryId);
+      if (!category) {
+        return res.status(401).json({
+          message: "Category not found",
         });
       }
   
@@ -29,16 +37,18 @@ const createMenu = async (req, res) => {
         restaurant: req.params.id,
             name,
             price,
-            category,
+            category: req.params.categoryId,
             itemImage: imageResult.secure_url, 
         
       });
   
-      // Add the menu item to the restaurant's menu array
+      // Add the menu item to the restaurant's and category menu array
       findRestaurant.menus.push(menuData._id);
+      category.menus.push(menuData._id);
   
       // Save the updated restaurant with the new menu item
       await findRestaurant.save();
+      await category.save();
   
       res.status(200).json({
         message: "Menu item created successfully",
