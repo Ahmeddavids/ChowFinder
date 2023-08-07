@@ -65,7 +65,7 @@ const createMenu = async (req, res) => {
 const getOneMenue = async (req,res)=>{
     try {
         const { menuId } = req.params;
-        const user = await menuModel.findById(menuId)
+        const user = await menuModel.findById(menuId).populate('category')
         res.json({ user })
       } catch (error) {
         res.status(500).json({
@@ -77,7 +77,7 @@ const getOneMenue = async (req,res)=>{
 
 const getAllMenu = async (req, res) => {
     try {
-      const menus = await menuModel.find()
+      const menus = await menuModel.find().populate('category')
       res.json({ menus });
     } catch (error) {
       res.status(500).json({
