@@ -77,7 +77,13 @@ const getOneMenue = async (req,res)=>{
 
 const getAllMenu = async (req, res) => {
     try {
-      const menus = await menuModel.find().populate('category')
+      const findRestaurant = await restaurantModel.findById(req.params.restId);
+      if (!findRestaurant) {
+        return res.status(401).json({
+          message: "Restaurant not found",
+        });
+      }
+      const menus = await menuModel.find({restaurant: req.params.restId}).populate('category')
       res.json({ menus });
     } catch (error) {
       res.status(500).json({

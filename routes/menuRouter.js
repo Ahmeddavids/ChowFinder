@@ -9,10 +9,10 @@ const {
     const { isAdmin, userAuth,isRole } = require("../middleware/authmiddleware")
 
 router.route('/:id/create-menu/:categoryId').post(userAuth,isRole, createMenu)
-router.route('/getOne/:id').get(getOneMenue)
-router.route('/getAll').get(getAllMenu )
-router.route('/update/:id').put(updateMenu )
-router.route('/delete').delete(deleteMenu )
+router.route('/menu/getone/:id').get(getOneMenue)
+router.route('/menu/getall/:restId').get(getAllMenu )
+router.route('/menu/update/:id').put(updateMenu )
+router.route('/menu/delete').delete(deleteMenu )
 
 
 
