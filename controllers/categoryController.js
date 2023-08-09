@@ -1,4 +1,5 @@
 const categoryModel = require('../models/categoryModel');
+const menuModel = require('../models/menuModel');
 
 const newCategory = async (req, res) => {
     try {
@@ -46,6 +47,24 @@ const getAllCategories = async (req, res) => {
     }
 };
 
+const getAllCategoriesByRestaurant = async (req, res) => {
+    try {
+        const categories = await menuModel.find({restaurant: req.params.id}).where("category").equals(req.params.catId);
+
+        if (categories.length === null) {
+            return res.status(404).json({
+                message: 'There are no data in category database'
+            })
+        }
+        res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({
+            error: 'Error retrieving categories',
+            details: error.message
+        });
+    }
+};
+
 
 const oneCategory = async (req, res) => {
     try {
@@ -71,5 +90,6 @@ const oneCategory = async (req, res) => {
 module.exports = {
     newCategory,
     getAllCategories,
-    oneCategory
+    oneCategory,
+    getAllCategoriesByRestaurant
 };

@@ -8,8 +8,8 @@ const categoryModel = require('../models/categoryModel')
 
 const createMenu = async (req, res) => {
     try {
-      const { name, price, } = req.body;
-      if (!name || !price ) {
+      const { name, price,foodDesc } = req.body;
+      if (!name || !price || !foodDesc) {
         return res.status(400).json({ message: "Please enter all fields" });
       }
   
@@ -36,6 +36,10 @@ const createMenu = async (req, res) => {
       const menuData = await menuModel.create({
         restaurant: req.params.id,
             name,
+            restaurantImage: findRestaurant.profileImage,
+            restaurantName: findRestaurant.businessName,
+            restaurantDesc: findRestaurant.description,
+            foodDesc,
             price,
             category: req.params.categoryId,
             itemImage: imageResult.secure_url, 
@@ -43,6 +47,7 @@ const createMenu = async (req, res) => {
       });
   
       // Add the menu item to the restaurant's and category menu array
+      // findRestaurant.category.push(req.params.categoryId)
       findRestaurant.menus.push(menuData._id);
       category.menus.push(menuData._id);
   
@@ -77,14 +82,14 @@ const getOneMenue = async (req,res)=>{
 
 const getAllMenu = async (req, res) => {
     try {
-      const findRestaurant = await restaurantModel.findById(req.params.restId);
+      const findRestaurant = await restaurantModel.findById(req.params.restId).populate("menus");
       if (!findRestaurant) {
         return res.status(401).json({
           message: "Restaurant not found",
         });
       }
-      const menus = await menuModel.find({restaurant: req.params.restId}).populate('category')
-      res.json({ menus });
+      // const menus = await menuModel.find().where("restaurant").equals(`${}`).populate('category')
+      res.json({ findRestaurant });
     } catch (error) {
       res.status(500).json({
         message: error.message,

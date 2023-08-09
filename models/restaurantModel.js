@@ -18,6 +18,13 @@ const restaurantSchema = new mongoose.Schema({
     require: true,
     unique: true
   },
+  description: {
+    type: String,
+  },
+  category: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'category'
+  }],
   profileImage: {
     type: String,
     require: true,

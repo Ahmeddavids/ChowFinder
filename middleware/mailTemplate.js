@@ -191,6 +191,7 @@ function forgotMailTemplate(link, fullname) {
 </html>
 
 
+
   `;
 }
 

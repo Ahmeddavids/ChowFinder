@@ -12,7 +12,8 @@ exports.newrestaurant = async (req, res) => {
       const { 
         businessName,
         address, 
-        email,  
+        email,
+        description,  
         phoneNumber, 
         password,
         confirmPassword} = req.body;
@@ -32,7 +33,8 @@ exports.newrestaurant = async (req, res) => {
           const restaurant = await restaurantModel.create({
         businessName: businessName.toUpperCase(),
         address, 
-        email: email.toLowerCase(),  
+        email: email.toLowerCase(),
+        description,  
         phoneNumber, 
         password:hash,
         confirmPassword: hash,
@@ -142,7 +144,7 @@ exports.newrestaurant = async (req, res) => {
       } else if (!restaurant.isVerified) {
         const token = await genToken(restaurant._id, "1d");
         const subject = "verify now";
-        const link = `${req.protocol}://${req.get("host")}/trippy/verify/${token}`;
+        const link = `${req.protocol}://${req.get("host")}/verify/${token}`;
         const message = ` kindly use this ${link} to Re-verify your account`;
         const data = {
           email: email,
@@ -178,7 +180,7 @@ exports.newrestaurant = async (req, res) => {
         const subject = "forgotten password";
         const token = await genToken(restaurant._id, "20m");
         // for better security practice a unique token should be sent to reset password instead of user._id
-        const link = `${req.protocol}://${req.get("host")}/trippy/reset-password/${token}`;
+        const link = `${req.protocol}://${req.get("host")}/reset-password/${token}`;
         const message = `click the ${link} to reset your password`;
         const data = {
           email: email,
@@ -265,7 +267,7 @@ exports.newrestaurant = async (req, res) => {
   
   exports.getOne = async (req, res) => {
     try {
-      const { restaurantId } = req.params;
+      const  restaurantId  = req.params.id;
       const restaurant = await restaurantModel.findById(restaurantId).populate('menus');
       if(restaurant){
         res.status(200).json({

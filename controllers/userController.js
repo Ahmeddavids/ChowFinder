@@ -43,7 +43,7 @@ const userSignUp = async (req, res) => {
     const protocol = req.protocol;
     const host = req.get("host");
     const subject = "Email Verification";
-    const link = `${protocol}://${host}/api/users/verify-email/${token}`;
+    const link = `https://chowfinderapp.onrender.com/verification/${token}`;
     const html = await mailTemplate(link, user.fullName);
     const mail = {
       email: email,

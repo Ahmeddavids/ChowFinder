@@ -17,12 +17,12 @@ const cartSchema = new mongoose.Schema({
       required: true,
       default: 1
     },
-    total: {
+    itemTotal: {
       type: Number,
       required: true
     }
   }],
-  total: {
+  grandTotal: {
     type: Number,
     default: 0
   }
