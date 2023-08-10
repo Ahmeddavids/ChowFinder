@@ -1,6 +1,7 @@
 const restaurantModel = require('../models/restaurantModel')
 const cloudinary = require("../middleware/cloudinary")
 const bcryptjs = require("bcrypt")
+const { mailTemplate, forgotMailTemplate } = require('../middleware/mailTemplate');
 
 
 const { sendEmail } = require("../middleware/sendMail");
@@ -45,16 +46,17 @@ exports.newrestaurant = async (req, res) => {
 
           const subject = "New restaurant";
           const link = `${req.protocol}://${req.get("host")}/rest/verify/${token}`;
-          const message = `Welcome onboard esteemed customer, kindly use this ${link} to verify your account`;
-          const data = {
-            email: email,
-            subject,
-            message,
-          };
-          sendEmail(data);
+          const html = await mailTemplate(link, restaurant.businessName);
+          const mail = {
+          email: email,
+          subject,
+          html,
+        };
+          sendEmail(mail);
+          const savedRestaurant = await restaurant.save();
           res.status(200).json({
             success: true,
-            data: restaurant,
+            data: savedRestaurant,
           });
         }
       } else {
@@ -98,13 +100,14 @@ exports.newrestaurant = async (req, res) => {
         const token = await genToken(restaurant._id, "1d");
         const subject = "New restaurant";
         const link = `${req.protocol}://${req.get("host")}/rest/verify/${token}`;
-        const message = `welcome! kindly use this ${link} to verify your account`;
-        const data = {
+        const html = await mailTemplate(link, restaurant.businessName);
+          const mail = {
           email: email,
           subject,
-          message,
+          html,
         };
-        sendEmail(data);
+          sendEmail(mail);
+          await restaurant.save();
         res.status(200).json({
           message: "verificaton email sent",
         });

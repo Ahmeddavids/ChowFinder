@@ -31,7 +31,7 @@ const newCategory = async (req, res) => {
 
 const getAllCategories = async (req, res) => {
     try {
-        const categories = await categoryModel.find().populate('menus');
+        const categories = await categoryModel.find();
 
         if (categories.length === null) {
             return res.status(404).json({
