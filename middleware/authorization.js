@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
+const revokedToken = require('../models/revokedTokenModel');
 
 
 // To authenticate a user token in the database
@@ -7,7 +8,7 @@ const authentication = async (req, res, next) => {
     try {
         const user = await userModel.findById(req.params.adminId);
 
-        if(!user) {
+        if (!user) {
             return res.status(400).json({
                 message: 'Admin Authentication Failed: Admin not found'
             })
@@ -15,7 +16,7 @@ const authentication = async (req, res, next) => {
 
         const userToken = user.token
 
-        if(!userToken) {
+        if (!userToken) {
             return res.status(400).json({
                 message: 'Admin Authentication Failed: Please sign in.'
             })
@@ -43,42 +44,61 @@ const authentication = async (req, res, next) => {
 
 const authenticate = async (req, res, next) => {
     try {
-        const user = await userModel.findById(req.params.userId)
+        const hasAuthorization = req.headers.authorization;
 
-        if(!user) {
+        if (!hasAuthorization) {
+            return res.status(401).json({
+                message: 'Authentication Failed: Missing token'
+            });
+        }
+
+        const token = hasAuthorization.split(' ')[1];
+
+        if (!token) {
+            return res.status(401).json({
+                message: 'Authentication Failed: Invalid token format'
+            });
+        }
+
+        const isTokenRevoked = await revokedToken.exists({ token });
+
+        if (isTokenRevoked) {
+            return res.status(401).json({
+                message: 'Authentication Failed: Token revoked'
+            });
+        }
+
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+        const user = await userModel.findById(decodedToken.userId);
+
+        if (!user) {
             return res.status(404).json({
                 message: 'Authentication Failed: User not found'
-            })
-        }
-        const userToken = user.token
-
-        if(!userToken) {
-            return res.status(400).json({
-                message: 'Authentication Failed: Please sign in.'
-            })
+            });
         }
 
-        await jwt.verify(userToken, process.env.JWT_SECRET, (err, payLoad) => {
+        req.user = decodedToken;
+        console.log(req.user)
 
-            if (err) {
-                return res.json(err.message)
-            } else {
-                req.user = payLoad
-                next()
-            }
-        })
+        next();
 
     } catch (error) {
+        if (error instanceof jwt.JsonWebTokenError) {
+            return res.status(401).json({
+                message: 'Authentication Failed: Invalid token'
+            });
+        }
         res.status(500).json({
             Error: error.message
-        })
+        });
     }
-}
+};
 
 // Admin authorization
 const checkUser = (req, res, next) => {
     authentication(req, res, async () => {
-        if(req.user.isAdmin || req.user.isSuperAdmin) {
+        if (req.user.isAdmin || req.user.isSuperAdmin) {
             next()
         } else {
             res.status(400).json({
@@ -93,7 +113,7 @@ const checkUser = (req, res, next) => {
 // Super admin authorization
 const superAuth = (req, res, next) => {
     authentication(req, res, async () => {
-        if(req.user.isSuperAdmin) {
+        if (req.user.isSuperAdmin) {
             next()
         } else {
             res.status(400).json({

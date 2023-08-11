@@ -10,6 +10,7 @@ const placeOrder = async (req, res) => {
     try {
       const { userId } = req.user;
       const { restaurantId } = req.params;
+      const { customerAddress } = req.body;
   
       // Find the user from the database
       const user = await userModel.findById(userId);
@@ -85,6 +86,7 @@ const placeOrder = async (req, res) => {
         items: orderItems,
         total: discountedTotal,
         customerName: user.fullName,
+        customerAddress,
         cashBack: cashBackToUse,
       });
   

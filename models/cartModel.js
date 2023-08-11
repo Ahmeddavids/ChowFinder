@@ -20,8 +20,23 @@ const cartSchema = new mongoose.Schema({
     itemTotal: {
       type: Number,
       required: true
+    },
+    itemPrice: {
+      type: Number,
+      required: true
+    },
+    itemName: {
+      type: String,
+      required: true
+    },
+    itemImage: {
+      type: String,
+      required: true
     }
   }],
+  cashBack: {
+    type: Number,
+  },
   grandTotal: {
     type: Number,
     default: 0

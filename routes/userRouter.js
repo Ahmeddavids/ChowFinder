@@ -15,7 +15,7 @@ router.route('/sign-up').post(validationMiddleware, userSignUp)
 
 router.route('/log-in').post(userLogin)
 
-router.route('/log-out/:userId').post(authenticate, signOut)
+router.route('/log-out/').post(authenticate, signOut)
 
 router.route( "/users/verify-email/:token" )
     .get( verifyEmail );
@@ -32,21 +32,21 @@ router.route('/users/reset-password/:token')
 router.route('/users/forgot-password')
 .post(validationUpdate, forgotPassword);
 
-router.route('/users/update/:userId')
+router.route('/users/update/')
 .patch(authenticate,validationUpdate, updateUser)
 
-router.route('/users/delete-self/:userId')
+router.route('/users/delete-self/')
 .delete(authenticate, deleteUser)
 
-router.route('/add-to-cart/:userId')
+router.route('/add-to-cart/')
 .post(authenticate, addToCart)
 
-router.route('/remove-from-cart/:userId')
+router.route('/remove-from-cart/')
 .post(authenticate, removeFromCart)
 
-router.route('/:userId/place-order/:restaurantId')
+router.route('/place-order/:restaurantId')
 .post(authenticate, placeOrder)
-router.route('/get-all-orders/:userId')
+router.route('/get-all-orders/')
 .get(authenticate, getAllOrders)
 
 

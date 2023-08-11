@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { mailTemplate, forgotMailTemplate } = require('../middleware/mailTemplate');
 const { sendEmail } = require('../middleware/sendMail');
+const RevokedToken = require('../models/revokedTokenModel')
 
                                               // USER ONBOARDING
 
@@ -36,9 +37,10 @@ const userSignUp = async (req, res) => {
 
     // create a token
     const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "30 mins" })
+    console.log(token)
 
     // Assign the created token to the user's token field
-    user.token = token
+    // user.token = token
 
     const protocol = req.protocol;
     const host = req.get("host");
@@ -284,23 +286,24 @@ const userLogin = async (req, res) => {
 
     const token = jwt.sign({
       userId: checkUser._id,
-      password: checkUser.password,
+      email: checkUser.email,
       isAdmin: checkUser.isAdmin,
       isSuperAdmin: checkUser.isSuperAdmin
     },
       process.env.JWT_SECRET, { expiresIn: "1 day" })
 
-    checkUser.token = token
+    // checkUser.token = token
 
     checkUser.save()
 
     res.status(200).json({
       message: 'Login successful',
-      data: {
-        id: checkUser._id,
-        fullName: checkUser.fullName,
-        token: checkUser.token
-      }
+      token
+      // data: {
+      //   id: checkUser._id,
+      //   fullName: checkUser.fullName,
+      //   token: checkUser.token
+      // }
     })
 
   } catch (error) {
@@ -361,25 +364,33 @@ const changePassword = async (req, res) => {
 // User sign out
 const signOut = async (req, res) => {
   try {
-    const { userId } = req.user;
+    const authorizationHeader = req.headers.authorization;
 
-    // Update the user's token to null
-    const user = await userModel.findByIdAndUpdate(userId, { token: null }, { new: true });
-
-    if (!user) {
-      return res.status(404).json({
-        message: 'User not found',
+    if (!authorizationHeader) {
+      return res.status(401).json({
+        message: 'Missing token'
       });
     }
+
+    const token = authorizationHeader.split(' ')[1];
+
+    // Create a new revoked token entry and save it to the database
+    const revokedToken = new RevokedToken({
+      token: token
+    });
+
+    await revokedToken.save();
+
     res.status(200).json({
-      message: 'User logged out successfully',
+      message: 'User logged out successfully'
     });
   } catch (error) {
     res.status(500).json({
-      Error: error.message,
+      Error: error.message
     });
   }
 };
+
 
                                             // USER CRUD
 

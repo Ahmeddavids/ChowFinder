@@ -14,6 +14,10 @@ const orderSchema = new mongoose.Schema({
     type: String, 
     required: true 
   },
+  customerAddress: { 
+    type: String, 
+    required: true 
+  },
   cashBack: { 
     type: Number, 
     default: 0 
