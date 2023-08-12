@@ -190,7 +190,7 @@ const forgotPassword = async (req, res) => {
     const protocol = req.protocol;
     const host = req.get("host");
     const subject = "Password Reset";
-    const link = `${protocol}://${host}/api/users/reset-password/${resetToken}`;
+    const link = `https://chowfinderapp.onrender.com/#/resetpassword/${resetToken}`;
     const html = await forgotMailTemplate(link, user.fullName);
     const mail = {
       email: email,

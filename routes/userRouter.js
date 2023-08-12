@@ -46,6 +46,7 @@ router.route('/remove-from-cart/')
 
 router.route('/place-order/:restaurantId')
 .post(authenticate, placeOrder)
+
 router.route('/get-all-orders/')
 .get(authenticate, getAllOrders)
 
