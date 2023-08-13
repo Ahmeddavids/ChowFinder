@@ -1,6 +1,6 @@
 const { checkUser, superAuth, authenticate } = require('../middleware/authorization');
 const { userSignUp, userLogin,  signOut, verifyEmail, resendVerificationEmail, forgotPassword, changePassword, resetPassword, updateUser, deleteUser } = require('../controllers/userController');
-const {addToCart, removeFromCart, } = require('../controllers/cartController');
+const {addToCart, removeFromCart, deleteItemFroCart, getCart} = require('../controllers/cartController');
 const { placeOrder, getAllOrders } = require('../controllers/orderController');
 const { validationMiddleware, validationUpdate, validationPassword } = require('../middleware/validator');
 
@@ -44,12 +44,17 @@ router.route('/add-to-cart/')
 router.route('/remove-from-cart/')
 .post(authenticate, removeFromCart)
 
-router.route('/place-order/:restaurantId')
+router.route('/place-order/')
 .post(authenticate, placeOrder)
 
 router.route('/get-all-orders/')
 .get(authenticate, getAllOrders)
 
+router.route('/get-cart/')
+.get(authenticate, getCart)
+
+router.route('/delete-from-cart/')
+.delete(authenticate, deleteItemFroCart)
 
 
 

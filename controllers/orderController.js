@@ -9,7 +9,7 @@ const orderModel = require('../models/orderModel');
 const placeOrder = async (req, res) => {
     try {
       const { userId } = req.user;
-      const { restaurantId } = req.params;
+      // const { restaurantId } = req.params;
       const { customerAddress } = req.body;
   
       // Find the user from the database
@@ -19,10 +19,10 @@ const placeOrder = async (req, res) => {
       }
   
       // Find the restaurant from the database
-      const restaurant = await restaurantModel.findById(restaurantId);
-      if (!restaurant) {
-        return res.status(404).json({ message: 'Restaurant not found' });
-      }
+      // const restaurant = await restaurantModel.findById(restaurantId);
+      // if (!restaurant) {
+      //   return res.status(404).json({ message: 'Restaurant not found' });
+      // }
   
       // Find the user's cart
       const cart = await cartModel.findOne({ user: userId });
@@ -31,10 +31,11 @@ const placeOrder = async (req, res) => {
       }
   
       // Find the menu from the database based on the restaurantId
-      const menu = await menuModel.findOne({ restaurant: restaurantId });
-      if (!menu) {
-        return res.status(404).json({ message: 'Menu not found for this restaurant' });
-      }
+      // const menu = await menuModel.findOne({ restaurant: restaurantId });
+      // if (!menu) {
+      //   return res.status(404).json({ message: 'Menu not found for this restaurant' });
+      // }
+      // console.log(menu)
   
       // Calculate the total amount based on the items in the cart
       let total = 0;
@@ -52,11 +53,11 @@ const placeOrder = async (req, res) => {
         total = itemTotal;
   
         // Update the cart item's total price
-        cartItem.total = itemTotal;
+        cartItem.itemTotal = itemTotal;
       });
   
       // Update the cart's total price
-      cart.total = total;
+      cart.grandTotal = total;
       await cart.save();
   
       // Calculate cash back based on the total amount and the user's cashback toggle
@@ -87,7 +88,7 @@ const placeOrder = async (req, res) => {
         total: discountedTotal,
         customerName: user.fullName,
         customerAddress,
-        cashBack: cashBackToUse,
+        cashBackUsed: cashBackToUse,
       });
   
       // Link the order to the user's 'orders' field
@@ -95,14 +96,17 @@ const placeOrder = async (req, res) => {
   
       // Clear the user's cart after placing the order
       cart.items = [];
-      cart.total = 0;
+      cart.grandTotal = 0;
       await cart.save();
   
       user.cashBackToggle = false
       // Save the user changes to the database
       await user.save();
   
-      res.status(201).json(userOrder);
+      res.status(201).json({
+        message: `Order successfully processed, Your cashback for this order is ${cashBackAmount}`,
+        userOrder
+      });
     } catch (error) {
       res.status(500).json({ message: 'Failed to create order', error: error.message });
     }
@@ -122,7 +126,7 @@ const placeOrder = async (req, res) => {
   
       // Find all orders for the user and sort them based on the last updated order (descending)
       const orders = await orderModel.find({ _id: { $in: user.orders } })
-        .sort({ updatedAt: -1 });
+        // .sort({ updatedAt: -1 });
   
       res.status(200).json(orders);
     } catch (error) {

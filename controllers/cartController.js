@@ -45,6 +45,9 @@ const addToCart = async (req, res) => {
     // Recalculate the total price for all items in the cart
     cart.grandTotal = cart.items.reduce((acc, item) => acc + item.itemTotal, 0);
 
+    // Update the user's cashback to reflect the current cashback
+    cart.cashBack = user.cashBack
+
     // Save the cart with the updated items and total
     await cart.save();
 
@@ -115,6 +118,9 @@ const removeFromCart = async (req, res) => {
     // Recalculate the total price for all items in the cart
     cart.grandTotal = cart.items.reduce((acc, item) => acc + item.itemTotal, 0);
 
+    // Update the user's cashback to reflect the current cashback
+    cart.cashBack = user.cashBack
+
     // Save the updated cart
     await cart.save();
 
@@ -137,9 +143,111 @@ const removeFromCart = async (req, res) => {
 };
 
 
+// Delete an item entirely from cart
+const deleteItemFroCart = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { menuItemId } = req.body;
+
+    // Check if the user and menu item exist
+    const user = await userModel.findById(userId);
+    const menuItem = await menuModel.findById(menuItemId);
+
+    if (!user || !menuItem) {
+      return res.status(404).json({
+        error: 'User or menu item not found'
+      });
+    }
+
+    // Find the user's cart
+    const cart = await cartModel.findOne({ user: userId });
+    if (!cart) {
+      return res.status(404).json({
+        error: 'Cart not found'
+      });
+    }
+    
+    // Check if the user's cart is empty
+    if (cart.items.length === 0) {
+      return res.status(404).json({
+        error: 'Cart is currently empty'
+      });
+    }
+
+    // Check if the menu item is in the cart
+    const existingItem = cart.items.find(item => item.menu.equals(menuItemId));
+    if (existingItem) {
+      cart.items.splice(existingItem, 1);
+    }
+    
+    cart.grandTotal = cart.items.reduce((acc, item) => acc + item.itemTotal, 0);
+
+    // Save the updated cart
+    await cart.save();
+
+    if (cart.items.length === 0) {
+      return res.status(404).json({
+        message: 'Item removed from cart successfully, Your cart is now empty',
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Item deleted from cart successfully',
+      cart
+    });
+
+  } catch (error) {
+    console.error(err);
+    return res.status(500).json({
+      error: err.message
+    });
+  }
+}
+
+
+// Get a user's cart
+const getCart = async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    // Check if the user exists
+    const user = await userModel.findById(userId);
+    if (!user ) {
+      return res.status(404).json({
+        error: 'User not found'
+      });
+    }
+
+    // Find the user's cart
+    const cart = await cartModel.findOne({ user: userId });
+    if (!cart) {
+      return res.status(404).json({
+        error: 'Cart not found'
+      });
+    }
+    
+    // Check if the user's cart is empty
+    if (cart.items.length === 0) {
+      return res.status(404).json({
+        error: 'Cart is currently empty'
+      });
+    }
+
+    res.status(200).json(cart)
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: error.message
+    });
+  }
+}
+
 
 
 module.exports = {
   addToCart,
-  removeFromCart
+  removeFromCart,
+  deleteItemFroCart,
+  getCart
 };

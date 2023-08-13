@@ -86,7 +86,7 @@ const authenticate = async (req, res, next) => {
     } catch (error) {
         if (error instanceof jwt.JsonWebTokenError) {
             return res.status(401).json({
-                message: 'Authentication Failed: Invalid token'
+                message: 'Authentication Failed: Invalid token, Please Signin again'
             });
         }
         res.status(500).json({

@@ -18,7 +18,7 @@ const orderSchema = new mongoose.Schema({
     type: String, 
     required: true 
   },
-  cashBack: { 
+  cashBackUsed: { 
     type: Number, 
     default: 0 
   },
