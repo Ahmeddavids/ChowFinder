@@ -84,12 +84,30 @@ const getAllMenu = async (req, res) => {
     try {
       const findRestaurant = await restaurantModel.findById(req.params.restId).populate("menus");
       if (!findRestaurant) {
-        return res.status(401).json({
+        return res.status(404).json({
           message: "Restaurant not found",
         });
       }
       // const menus = await menuModel.find().where("restaurant").equals(`${}`).populate('category')
       res.json({ findRestaurant });
+    } catch (error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    }
+};
+
+const getAllMenuInDatabase = async (req, res) => {
+    try {
+      const menus = await menuModel.find();
+      if (menus.length === 0) {
+        return res.status(404).json({
+          message: "There are currently no menu in the database",
+        });
+      }
+
+      res.status(200).json( menus );
+
     } catch (error) {
       res.status(500).json({
         message: error.message,
@@ -159,6 +177,7 @@ module.exports = {
     getOneMenue,
     getAllMenu,
     updateMenu,
-    deleteMenu
+    deleteMenu,
+    getAllMenuInDatabase
 }
 

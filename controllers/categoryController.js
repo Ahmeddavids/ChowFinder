@@ -47,6 +47,7 @@ const getAllCategories = async (req, res) => {
     }
 };
 
+
 const getAllCategoriesByRestaurant = async (req, res) => {
     try {
         const categories = await menuModel.find({restaurant: req.params.id}).where("category").equals(req.params.catId);

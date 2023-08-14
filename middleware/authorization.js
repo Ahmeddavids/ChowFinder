@@ -79,7 +79,6 @@ const authenticate = async (req, res, next) => {
         }
 
         req.user = decodedToken;
-        console.log(req.user)
 
         next();
 

@@ -2,7 +2,7 @@ const { checkUser, superAuth, authenticate } = require('../middleware/authorizat
 const { userSignUp, userLogin,  signOut, verifyEmail, resendVerificationEmail, forgotPassword, changePassword, resetPassword, updateUser, deleteUser } = require('../controllers/userController');
 const {addToCart, removeFromCart, deleteItemFroCart, getCart} = require('../controllers/cartController');
 const { placeOrder, getAllOrders } = require('../controllers/orderController');
-const { validationMiddleware, validationUpdate, validationPassword } = require('../middleware/validator');
+const { validationMiddleware, validationUpdate, validationPassword, validationCustomerAddress } = require('../middleware/validator');
 
 
 const router = require('express').Router();
@@ -45,7 +45,7 @@ router.route('/remove-from-cart/')
 .post(authenticate, removeFromCart)
 
 router.route('/place-order/')
-.post(authenticate, placeOrder)
+.post(authenticate, validationCustomerAddress, placeOrder)
 
 router.route('/get-all-orders/')
 .get(authenticate, getAllOrders)

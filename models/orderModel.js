@@ -24,7 +24,7 @@ const orderSchema = new mongoose.Schema({
   },
   orderDate: { 
     type: Date, 
-    default: Date.now 
+    default: () => new Date(Date.now() + 60 * 60 * 1000)
   }
 });
 

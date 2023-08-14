@@ -18,10 +18,21 @@ const addToCart = async (req, res) => {
       });
     }
 
+    // Extract the restaurants ID from the menu
+    const restaurantId = menuItem.restaurant;
+
     // Find or create the user's cart
     let cart = await cartModel.findOne({ user: userId });
     if (!cart) {
-      cart = new cartModel({ user: userId, items: [], grandTotal: 0, cashBack: user.cashBack });
+      cart = new cartModel({ restaurant: restaurantId, user: userId, items: [], grandTotal: 0, cashBack: user.cashBack });
+    }
+
+    // Check the existing restaurant ID in the cart and compare with the new menu's restaurant's ID
+    if (cart) {
+      if (cart.restaurant.toString() !== restaurantId.toString())
+        return res.status(400).json({
+          error: 'Cannot add items from different restaurants to the same cart'
+        })
     }
 
     // Check if the menu item is already in the cart
@@ -89,7 +100,7 @@ const removeFromCart = async (req, res) => {
         error: 'Cart not found'
       });
     }
-    
+
     // Check if the user's cart is empty
     if (cart.items.length === 0) {
       return res.status(404).json({
@@ -166,7 +177,7 @@ const deleteItemFroCart = async (req, res) => {
         error: 'Cart not found'
       });
     }
-    
+
     // Check if the user's cart is empty
     if (cart.items.length === 0) {
       return res.status(404).json({
@@ -179,7 +190,7 @@ const deleteItemFroCart = async (req, res) => {
     if (existingItem) {
       cart.items.splice(existingItem, 1);
     }
-    
+
     cart.grandTotal = cart.items.reduce((acc, item) => acc + item.itemTotal, 0);
 
     // Save the updated cart
@@ -212,7 +223,7 @@ const getCart = async (req, res) => {
 
     // Check if the user exists
     const user = await userModel.findById(userId);
-    if (!user ) {
+    if (!user) {
       return res.status(404).json({
         error: 'User not found'
       });
@@ -225,7 +236,7 @@ const getCart = async (req, res) => {
         error: 'Cart not found'
       });
     }
-    
+
     // Check if the user's cart is empty
     if (cart.items.length === 0) {
       return res.status(404).json({

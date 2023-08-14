@@ -117,8 +117,38 @@ const validationPassword = (req, res, next) => {
   next();
 };
 
+
+const validationCustomerAddress = (req, res, next) => {
+  // Define the validation schema using Joi
+  const schema = Joi.object({
+    customerAddress: Joi.string()
+      .required()
+      .trim()
+      .messages({
+        "string.base": "Customer address must be a string",
+        "string.empty": "Customer address must not be an empty string",
+        "any.required": "Customer address is required",
+      }),
+  });
+  
+
+  // Validate the request body against the schema
+  const { error } = schema.validate(req.body, { abortEarly: false });
+
+  // If there's a validation error, return a response with the error details
+  if (error) {
+    const errorMessage = error.details.map((err) => err.message).join(" ");
+    return res.status(400).json({ error: errorMessage });
+  }
+
+  // If validation is successful, move to the next middleware
+  next();
+};
+
+
 module.exports = { 
   validationMiddleware,
   validationUpdate,
-  validationPassword
+  validationPassword,
+  validationCustomerAddress
   };
