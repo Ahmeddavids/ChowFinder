@@ -21,9 +21,8 @@ const userSignUp = async (req, res) => {
       })
     }
 
-    // salt the password using bcrypt
+    // salt and hash the password using bcrypt
     const salt = bcrypt.genSaltSync(12)
-    // hash the salted password using bcrypt
     const hashedPassword = bcrypt.hashSync(password, salt)
     const data = {
       fullName: fullName.toUpperCase(),
@@ -38,9 +37,6 @@ const userSignUp = async (req, res) => {
     // create a token
     const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "30 mins" })
     console.log(token)
-
-    // Assign the created token to the user's token field
-    // user.token = token
 
     const protocol = req.protocol;
     const host = req.get("host");
@@ -100,18 +96,13 @@ const verifyEmail = async (req, res) => {
       });
     }
 
-    // update the user verification
+    // update the user verification and save changes to database
     user.isVerified = true;
-
-    // save the changes
     await user.save();
-
-    // update the user's verification status
-    const updatedUser = await userModel.findOneAndUpdate({ email: email.toLowerCase() }, user);
 
     res.status(200).json({
       message: "User verified successfully",
-      data: updatedUser,
+      data: user,
     })
     // res.status( 200 ).redirect( `${req.protocol}://${req.get("host")}/api/log-in` );
 
@@ -128,6 +119,11 @@ const resendVerificationEmail = async (req, res) => {
   try {
     // get user email from request body
     const { email } = req.body;
+    if (!email) {
+      return res.status(404).json({
+        error: "Please enter email address"
+      });
+    }
 
     // find user
     const user = await userModel.findOne({ email: email.toLowerCase() });
@@ -147,8 +143,6 @@ const resendVerificationEmail = async (req, res) => {
     // create a token
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "30 mins" });
 
-    const protocol = req.protocol;
-    const host = req.get("host");
     const subject = "Email Verification";
     const link = `https://chowfinderapp.onrender.com/#/verification/${token}`;
     const html = await mailTemplate(link, user.fullName);
@@ -175,6 +169,11 @@ const resendVerificationEmail = async (req, res) => {
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
+    if (!email) {
+      return res.status(404).json({
+        error: "Please enter email address"
+      });
+    }
 
     // Check if the email exists in the userModel
     const user = await userModel.findOne({ email: email.toLowerCase() });
@@ -187,8 +186,6 @@ const forgotPassword = async (req, res) => {
     // Generate a reset token
     const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "30m" });
 
-    const protocol = req.protocol;
-    const host = req.get("host");
     const subject = "Password Reset";
     const link = `https://chowfinderapp.onrender.com/#/resetpassword/${resetToken}`;
     const html = await forgotMailTemplate(link, user.fullName);
@@ -216,6 +213,11 @@ const resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
     const { newPassword } = req.body;
+    if (!newPassword) {
+      return res.status(404).json({
+        error: "Please enter a new password"
+      });
+    }
 
     // Verify the user's token
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
@@ -256,19 +258,24 @@ const userLogin = async (req, res) => {
   try {
     // Extract the user's email and password
     const { password, email } = req.body;
+    if (!email || !password) {
+      return res.status(404).json({
+        error: "Please enter all fields"
+      });
+    }
 
     // Find user by their registered email
-    const checkUser = await userModel.findOne({ email: email.toLowerCase() })
+    const user = await userModel.findOne({ email: email.toLowerCase() })
 
     // Check if the user exists
-    if (!checkUser) {
+    if (!user) {
       return res.status(404).json({
         Failed: 'User not found'
       })
     }
 
     // Compare user's password with the saved password.
-    const checkPassword = bcrypt.compareSync(password, checkUser.password)
+    const checkPassword = bcrypt.compareSync(password, user.password)
     // Check for password error
     if (!checkPassword) {
       return res.status(404).json({
@@ -278,32 +285,25 @@ const userLogin = async (req, res) => {
     }
 
     // Check if the user if verified
-    if (!checkUser.isVerified) {
+    if (!user.isVerified) {
       return res.status(404).json({
         message: `User with this email: ${email} is not verified.`
       })
     }
 
     const token = jwt.sign({
-      userId: checkUser._id,
-      email: checkUser.email,
-      isAdmin: checkUser.isAdmin,
-      isSuperAdmin: checkUser.isSuperAdmin
+      userId: user._id,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      isSuperAdmin: user.isSuperAdmin
     },
       process.env.JWT_SECRET, { expiresIn: "1 day" })
 
-    // checkUser.token = token
-
-    checkUser.save()
+    user.save()
 
     res.status(200).json({
       message: 'Login successful',
       token
-      // data: {
-      //   id: checkUser._id,
-      //   fullName: checkUser.fullName,
-      //   token: checkUser.token
-      // }
     })
 
   } catch (error) {
@@ -318,6 +318,11 @@ const changePassword = async (req, res) => {
   try {
     const { token } = req.params;
     const { newPassword, existingPassword } = req.body;
+    if (!newPassword || !existingPassword) {
+      return res.status(404).json({
+        error: "Please enter all fields"
+      });
+    }
 
     // Verify the user's token
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
@@ -461,7 +466,6 @@ const deleteUser = async (req, res) => {
     const deletedUser = await userModel.findByIdAndDelete(userId)
     res.status(200).json({
       message: 'User deleted successfully',
-
     })
 
   } catch (error) {

@@ -7,6 +7,11 @@ const addToCart = async (req, res) => {
   try {
     const { userId } = req.user;
     const { menuItemId } = req.body;
+    if (!menuItemId) {
+      return res.status(400).json({
+        error: 'Menu Item Id required'
+      });
+    }
 
     // Check if the user and menu item exist
     const user = await userModel.findById(userId);
@@ -21,10 +26,16 @@ const addToCart = async (req, res) => {
     // Extract the restaurants ID from the menu
     const restaurantId = menuItem.restaurant;
 
-    // Find or create the user's cart
+    // Find the user's cart
     let cart = await cartModel.findOne({ user: userId });
+
+    // Create a new cart for the user if no existing cart
     if (!cart) {
       cart = new cartModel({ restaurant: restaurantId, user: userId, items: [], grandTotal: 0, cashBack: user.cashBack });
+    }
+
+     if (cart.items.length === 0){
+      cart.restaurant = restaurantId;
     }
 
     // Check the existing restaurant ID in the cart and compare with the new menu's restaurant's ID
@@ -83,6 +94,12 @@ const removeFromCart = async (req, res) => {
     const { userId } = req.user;
     const { menuItemId } = req.body;
 
+    if (!menuItemId) {
+      return res.status(400).json({
+        error: 'Menu Item Id required'
+      });
+    }
+
     // Check if the user and menu item exist
     const user = await userModel.findById(userId);
     const menuItem = await menuModel.findById(menuItemId);
@@ -107,7 +124,6 @@ const removeFromCart = async (req, res) => {
         error: 'Cart is currently empty'
       });
     }
-
 
     // Check if the menu item is in the cart
     const existingItemIndex = cart.items.findIndex(item => item.menu.equals(menuItemId));
@@ -159,6 +175,12 @@ const deleteItemFroCart = async (req, res) => {
   try {
     const { userId } = req.user;
     const { menuItemId } = req.body;
+
+    if (!menuItemId) {
+      return res.status(400).json({
+        error: 'Menu Item Id required'
+      });
+    }
 
     // Check if the user and menu item exist
     const user = await userModel.findById(userId);
