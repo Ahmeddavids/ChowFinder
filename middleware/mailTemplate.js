@@ -196,11 +196,101 @@ function forgotMailTemplate(link, fullname) {
 }
 
 
+function orderMailTemplate(fullname) {
+  return `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      /* Reset some default styles for consistency */
+      body, p {
+        margin: 0;
+        padding: 0;
+      }
+  
+      /* Container styles */
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        font-family: Arial, sans-serif;
+      }
+  
+      /* Header styles */
+      .header {
+        text-align: center;
+        padding: 10px 0;
+      }
+  
+      /* Logo styles */
+      .logo {
+        max-width: 100px;
+        height: auto;
+      }
+  
+      /* Content styles */
+      .content {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #f7f7f7;
+      }
+  
+      /* Order details styles */
+      .order-details {
+        margin-bottom: 20px;
+      }
+  
+      /* Footer styles */
+      .footer {
+        text-align: center;
+        padding: 10px 0;
+        background-color: #e0e0e0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <img src="your-food-logo.png" alt="Food Logo" class="logo">
+        <h1>Order Confirmation</h1>
+      </div>
+      <div class="content">
+        <p>Dear ${fullname},</p>
+        <p>Your order has been successfully placed!</p>
+        <div class="order-details">
+          <h2>Order Details:</h2>
+          <p><strong>Order ID:</strong> [Order ID]</p>
+          <p><strong>Date:</strong> [Order Date]</p>
+          <p><strong>Items:</strong></p>
+          <ul>
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <!-- Add more items as needed -->
+          </ul>
+          <p><strong>Total Amount:</strong> $[Total Amount]</p>
+        </div>
+        <p>Thank you for choosing us for your meal!</p>
+      </div>
+      <div class="footer">
+        <p>If you have any questions, please contact us at [Contact Email].</p>
+      </div>
+    </div>
+  </body>
+  </html>
+  
+  `;
+}
+
+
 
 
 module.exports = {
   mailTemplate,
-  forgotMailTemplate
+  forgotMailTemplate,
+  orderMailTemplate
 };
 
 

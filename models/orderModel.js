@@ -22,6 +22,10 @@ const orderSchema = new mongoose.Schema({
     type: Number, 
     default: 0 
   },
+  cashBackOnOrder: { 
+    type: Number, 
+    default: 0 
+  },
   orderDate: { 
     type: Date, 
     default: () => new Date(Date.now() + 60 * 60 * 1000)

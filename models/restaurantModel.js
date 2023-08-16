@@ -33,6 +33,10 @@ const restaurantSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "Menu",
   }],
+  orders: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order'
+  }],
   password: {
     type: String,
     require: true,
@@ -53,10 +57,10 @@ const restaurantSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  role:{
-    type:String,
-    enum:["superAdmin","admin"],
-    default:"admin"
+  role: {
+    type: String,
+    enum: ["superAdmin", "admin"],
+    default: "admin"
   }
 
 }, { timestamps: true });

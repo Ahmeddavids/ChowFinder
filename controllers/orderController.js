@@ -3,6 +3,8 @@ const restaurantModel = require('../models/restaurantModel');
 const menuModel = require('../models/menuModel');
 const cartModel = require('../models/cartModel')
 const orderModel = require('../models/orderModel');
+const { orderMailTemplate } = require('../middleware/mailTemplate');
+const { sendEmail } = require('../middleware/sendMail');
 
 
 // User to place an order
@@ -23,8 +25,13 @@ const placeOrder = async (req, res) => {
       return res.status(404).json({ message: 'Cart not found or is empty' });
     }
 
+    // Extract the restaurant's ID from the cart and find the restaurant
+    const restaurantId = cart.restaurant;
+    const restaurant = await restaurantModel.findById(restaurantId);
+
     // Calculate the total amount based on the items in the cart
     let total = 0;
+    let itemNames = []
     try {
       for (const cartItem of cart.items) {
         const menuItem = await menuModel.findById(cartItem.menu);
@@ -32,6 +39,8 @@ const placeOrder = async (req, res) => {
           console.log(`Menu item not found for menu ID: ${cartItem.menu}`);
           continue; // Skip to the next iteration
         }
+        // Get the names of each item
+        itemNames.push(menuItem.name)
 
         // Calculate the total price for the cart item based on the quantity and menu item price
         const itemTotal = cartItem.quantity * menuItem.price;
@@ -84,12 +93,15 @@ const placeOrder = async (req, res) => {
       customerName: user.fullName,
       customerAddress,
       cashBackUsed: cashBackToUse,
+      cashBackOnOrder: cashBackAmount,
     });
 
-    // Link the order to the user's 'orders' field
+    // Link the order to the user's 'orders' field and the restaunt's orders field
     user.orders.push(userOrder._id);
+    restaurant.orders.push(userOrder._id);
 
     // Clear the user's cart after placing the order
+    cart.restaurant = null
     cart.items = [];
     cart.grandTotal = 0;
     cart.cashBack = user.cashBack;
@@ -100,25 +112,38 @@ const placeOrder = async (req, res) => {
 
     // Save the user changes to the database
     await user.save();
+    await restaurant.save();
+
+    // const subject = "Order Confirmation";
+    // const html = await orderMailTemplate(user.fullName);
+    // const mail = {
+    //   email: user.email,
+    //   subject,
+    //   html,
+    // };
+    // sendEmail(mail);
 
     const response = {
       message: `Order successfully processed, Your cashback for this order is ${cashBackAmount}`,
       userOrder: {
         orderId: userOrder._id,
-        items: userOrder.items,
+        items: itemNames,
         total: userOrder.total,
         customerName: userOrder.customerName,
         customerAddress: userOrder.customerAddress,
         cashBackUsed: userOrder.cashBackUsed,
-        orderDate: userOrder.orderDate
-      },
-      cashBackAmount,
+        orderDate: userOrder.orderDate,
+        cashBackOnOrder: userOrder.cashBackOnOrder,
+      }
     };
 
     res.status(201).json(response);
 
   } catch (error) {
-    res.status(500).json({ message: 'Failed to create order', error: error.message });
+    res.status(500).json({ 
+      message: 'Failed to create order', 
+      error: error.message 
+    });
   }
 };
 
@@ -134,13 +159,15 @@ const getAllOrders = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Find all orders for the user and sort them based on the last updated order (descending)
-    const orders = await orderModel.find({ _id: { $in: user.orders } })
-    // .sort({ updatedAt: -1 });
+    // Find all orders for the user
+    const orders = await orderModel.find({ _id: { $in: user.orders } }).sort({ orderDate: -1 });
 
     res.status(200).json(orders);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get orders', error: error.message });
+    res.status(500).json({ 
+      message: 'Failed to get orders', 
+      error: error.message 
+    });
   }
 };
 
