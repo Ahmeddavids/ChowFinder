@@ -156,7 +156,7 @@ exports.addLocation = async (req, res) => {
         await location.save();
 
         res.status(200).json({
-            message: 'Restaurant added to location successfully',
+            message: `Restaurant added to ${location.name} location successfully`,
             data: location,
         });
     } catch (error) {

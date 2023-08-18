@@ -303,6 +303,8 @@ const userLogin = async (req, res) => {
 
     res.status(200).json({
       message: 'Login successful',
+      fullName: user.fullName,
+      email: user.email,
       token
     })
 
