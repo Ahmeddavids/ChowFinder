@@ -34,9 +34,6 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    token: {
-        type: String
-    },
     isSuperAdmin: {
         type: Boolean,
         default: false
