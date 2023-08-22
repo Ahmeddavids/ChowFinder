@@ -114,14 +114,14 @@ const placeOrder = async (req, res) => {
     await user.save();
     await restaurant.save();
 
-    // const subject = "Order Confirmation";
-    // const html = await orderMailTemplate(user.fullName);
-    // const mail = {
-    //   email: user.email,
-    //   subject,
-    //   html,
-    // };
-    // sendEmail(mail);
+    const subject = "Order Confirmation";
+    const html = await orderMailTemplate(user.fullName, userOrder._id, userOrder.orderDate, itemNames, userOrder.total);
+    const mail = {
+      email: user.email,
+      subject,
+      html,
+    };
+    sendEmail(mail);
 
     const response = {
       message: `Order successfully processed, Your cashback for this order is ${cashBackAmount}`,

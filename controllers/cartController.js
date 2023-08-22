@@ -207,11 +207,8 @@ const deleteItemFroCart = async (req, res) => {
       });
     }
 
-    // Check if the menu item is in the cart
-    const existingItem = cart.items.find(item => item.menu.equals(menuItemId));
-    if (existingItem) {
-      cart.items.splice(existingItem, 1);
-    }
+    // Filter the item ID from the cart items menu
+    cart.items = cart.items.filter((item) => item.menu.toString() !== menuItemId);
 
     cart.grandTotal = cart.items.reduce((acc, item) => acc + item.itemTotal, 0);
 

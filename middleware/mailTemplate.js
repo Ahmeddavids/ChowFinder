@@ -4,94 +4,97 @@
 function mailTemplate(link, fullname) {
   return `
   <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Email Verification - CHOWFINDER</title>
-  <style>
-    body {
-      background: linear-gradient(90deg, #00ccff, #ffffff);
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .container {
-      max-width: 400px;
-      padding: 40px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .header h1 {
-      font-size: 36px;
-      color: #FC8019;
-      margin: 0;
-    }
-
-    .slogan {
-      font-size: 18px;
-      text-align: center;
-      margin-top: 0;
-      color: #FC8019;
-    }
-
-    .verification-message {
-      font-size: 16px;
-      color: #333;
-      margin-bottom: 20px;
-    }
-
-    .verification-button {
-      display: block;
-      width: 100%;
-      max-width: 200px;
-      background-color: #FC8019;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 12px;
-      font-size: 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      margin: 0 auto;
-    }
-
-    .verification-button:hover {
-      background-color: #FFA75F;
-    }
-
-    .footer {
-      text-align: center;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>CHOWFINDER</h1>
-      <p class="slogan">You Crave, We Deliver</p>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - CHOWFINDER</title>
+    <style>
+      body {
+        background: linear-gradient(90deg, #00ccff, #ffffff);
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+  
+      .container {
+        max-width: 350px;
+        padding: 40px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+      }
+  
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+  
+      .logo {
+        max-width: 220px;
+        height: auto;
+      }
+  
+      .slogan {
+        font-size: 18px;
+        text-align: center;
+        margin-top: 0;
+        color: #FC8019;
+      }
+  
+      .verification-message {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: justify;
+      }
+  
+      .verification-button {
+        display: block;
+        width: 100%;
+        max-width: 200px;
+        background-color: #FC8019;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 12px;
+        font-size: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin: 0 auto;
+        text-decoration: none; 
+      }
+  
+      .verification-button:hover {
+        background-color: #FFA75F;
+      }
+  
+      .footer {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img src="https://res.cloudinary.com/dpugols4b/image/upload/v1692122110/53FCB659-7D06-4CFD-BEDD-71C8A5FE2AC4-removebg-preview_ptap4b.png" alt="CHOWFINDER Logo" class="logo">
+        <!-- <p class="slogan">You Crave, We Deliver</p> -->
+      </div>
+      <div class="verification-message">Dear ${fullname},</div>
+      <div class="verification-message">Thank you for signing up with CHOWFINDER. To complete your registration, please click the button below to verify your email address:</div>
+      <a href=${link} class="verification-button">Verify Email</a>
     </div>
-    <div class="verification-message">Dear ${fullname},</div>
-    <div class="verification-message">Thank you for signing up with CHOWFINDER. To complete your registration, please click the button below to verify your email address:</div>
-    <a href=${link} class="verification-button">Verify Email</a>
-  </div>
-  <div class="footer">
-    CHOWFINDER | Address: 161 Muyibi Street, Olodi-Apapa, Ajegunle | Phone: (234) 456-7890 | Email: chowfinder1@gmail.com
-  </div>
-</body>
-</html>
+    <div class="footer">
+      CHOWFINDER | Address: 161 Muyibi Street, Olodi-Apapa, Ajegunle | Phone: (234) 456-7890 | Email: chowfinder1@gmail.com
+    </div>
+  </body>
+  </html>
+  
+
 
 
   `;
@@ -196,7 +199,7 @@ function forgotMailTemplate(link, fullname) {
 }
 
 
-function orderMailTemplate(fullname) {
+function orderMailTemplate(fullname, orderId, orderDate, items, total) {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -227,7 +230,7 @@ function orderMailTemplate(fullname) {
   
       /* Logo styles */
       .logo {
-        max-width: 100px;
+        max-width: 220px;
         height: auto;
       }
   
@@ -254,7 +257,7 @@ function orderMailTemplate(fullname) {
   <body>
     <div class="email-container">
       <div class="header">
-        <img src="your-food-logo.png" alt="Food Logo" class="logo">
+        <img src="https://res.cloudinary.com/dpugols4b/image/upload/v1692122110/53FCB659-7D06-4CFD-BEDD-71C8A5FE2AC4-removebg-preview_ptap4b.png" alt="Food Logo" class="logo">
         <h1>Order Confirmation</h1>
       </div>
       <div class="content">
@@ -262,20 +265,18 @@ function orderMailTemplate(fullname) {
         <p>Your order has been successfully placed!</p>
         <div class="order-details">
           <h2>Order Details:</h2>
-          <p><strong>Order ID:</strong> [Order ID]</p>
-          <p><strong>Date:</strong> [Order Date]</p>
+          <p><strong>Order ID:</strong> ${orderId}</p>
+          <p><strong>Date:</strong> ${orderDate}</p>
           <p><strong>Items:</strong></p>
           <ul>
-            <li>Item 1</li>
-            <li>Item 2</li>
-            <!-- Add more items as needed -->
+            ${items.map(item => `<li>${item}</li>`).join('')}
           </ul>
-          <p><strong>Total Amount:</strong> $[Total Amount]</p>
+          <p><strong>Total Amount:</strong> &#8358; ${total}</p>
         </div>
         <p>Thank you for choosing us for your meal!</p>
       </div>
       <div class="footer">
-        <p>If you have any questions, please contact us at [Contact Email].</p>
+        <p>If you have any questions, please contact us at chowfinder1@gmail.com.</p>
       </div>
     </div>
   </body>

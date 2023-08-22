@@ -11,7 +11,7 @@ const authenticate = async (req, res, next) => {
 
         if (!hasAuthorization) {
             return res.status(401).json({
-                message: 'Authentication Failed: Missing token'
+                message: 'Action requires sign-in. Please log in to continue..'
             });
         }
 
@@ -89,7 +89,7 @@ const authenticate = async (req, res, next) => {
 
 
 module.exports = {
-    checkUser,
-    superAuth,
+    // checkUser,
+    // superAuth,
     authenticate
 }
