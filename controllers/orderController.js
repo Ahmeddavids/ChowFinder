@@ -11,12 +11,16 @@ const { sendEmail } = require('../middleware/sendMail');
 const placeOrder = async (req, res) => {
   try {
     const { userId } = req.user;
-    const { customerAddress } = req.body;
+    const { customerAddress, cashBackToggle } = req.body;
 
     // Find the user from the database
     const user = await userModel.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (cashBackToggle === true){
+      user.cashBackToggle = true
     }
 
     // Find the user's cart
@@ -62,8 +66,11 @@ const placeOrder = async (req, res) => {
 
     // Calculate cash back based on the total amount and the user's cashback toggle
     let cashBackToUse = 0;
-    if (user.cashBackToggle) {
+    if (cashBackToggle && user.cashBackToggle === true) {
       cashBackToUse = Math.min(user.cashBack, total)
+
+    // Return the user's cashBackToggle to false so as to make it optional for the next order
+      user.cashBackToggle = false;
     }
 
     // Apply cash back to the current order
@@ -107,8 +114,7 @@ const placeOrder = async (req, res) => {
     cart.cashBack = user.cashBack;
     await cart.save();
 
-    // Return the user's cashBackToggle to false so as to make it optional for the next order
-    user.cashBackToggle = false;
+    
 
     // Save the user changes to the database
     await user.save();
@@ -134,6 +140,7 @@ const placeOrder = async (req, res) => {
         cashBackUsed: userOrder.cashBackUsed,
         orderDate: userOrder.orderDate,
         cashBackOnOrder: userOrder.cashBackOnOrder,
+        totalUserCashBack: user.cashBack,
       }
     };
 
@@ -160,7 +167,7 @@ const getAllOrders = async (req, res) => {
     }
 
     // Find all orders for the user
-    const orders = await orderModel.find({ _id: { $in: user.orders } }).sort({ orderDate: -1 });
+    const orders = await orderModel.find({ _id: { $in: user.orders } }).sort({ orderDate: -1 }).populate("items");
 
     res.status(200).json(orders);
   } catch (error) {

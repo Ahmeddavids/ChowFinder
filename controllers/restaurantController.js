@@ -19,6 +19,12 @@ exports.newrestaurant = async (req, res) => {
         password,
         confirmPassword} = req.body;
 
+        if (!businessName || !address || !email || !description || !phoneNumber || !password || !confirmPassword){
+          res.status(400).json({
+            error: 'Please enter all fields'
+          })
+        }
+
       const isEmail = await restaurantModel.findOne({ email });
       if (password === confirmPassword) {
         if (isEmail) {

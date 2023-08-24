@@ -11,7 +11,7 @@ const authenticate = async (req, res, next) => {
 
         if (!hasAuthorization) {
             return res.status(401).json({
-                message: 'Action requires sign-in. Please log in to continue..'
+                message: 'Action requires sign-in. Please log in to continue.'
             });
         }
 
@@ -19,7 +19,7 @@ const authenticate = async (req, res, next) => {
 
         if (!token) {
             return res.status(401).json({
-                message: 'Authentication Failed: Invalid token format'
+                message: 'Action requires sign-in. Please log in to continue.'
             });
         }
 

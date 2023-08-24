@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const orderSchema = new mongoose.Schema({
   items: [{ 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'MenuItem', 
+    ref: 'Menu', 
     required: true 
   }],
   total: { 
@@ -25,6 +25,10 @@ const orderSchema = new mongoose.Schema({
   cashBackOnOrder: { 
     type: Number, 
     default: 0 
+  },
+  cashBackToggle: { 
+    type: Boolean, 
+    // required: true 
   },
   orderDate: { 
     type: Date, 

@@ -129,6 +129,7 @@ const validationCustomerAddress = (req, res, next) => {
         "string.empty": "Customer address must not be an empty string",
         "any.required": "Customer address is required",
       }),
+      cashBackToggle: Joi.boolean()
   });
   
 
