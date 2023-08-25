@@ -9,6 +9,11 @@ const fileUpload = require("express-fileupload");
 const cors = require('cors');
 const morgan = require("morgan");
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
 
 const PORT = 1800;
 
@@ -18,7 +23,9 @@ app.use(express.json());
 app.use(fileUpload({
     useTempFiles: true
 }));
-app.use(cors({origin: "*"}));
+// app.use(cors({origin: "*"}));
+app.use(cors({origin: "http://127.0.0.1:5173"}));
+
 
 
 app.use('/api', userRouter);
