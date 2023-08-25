@@ -69,12 +69,9 @@ const placeOrder = async (req, res) => {
     if (cashBackToggle && user.cashBackToggle === true) {
       if (user.cashBack >= total) {
         cashBackToUse = total
-        total = 0
-
       } else {
         cashBackToUse = Math.min(user.cashBack, total);
       }
-
       // Return the user's cashBackToggle to false so as to make it optional for the next order
       user.cashBackToggle = false;
     }
@@ -119,8 +116,6 @@ const placeOrder = async (req, res) => {
     cart.grandTotal = 0;
     cart.cashBack = user.cashBack;
     await cart.save();
-
-    
 
     // Save the user changes to the database
     await user.save();
