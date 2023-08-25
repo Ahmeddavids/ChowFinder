@@ -19,7 +19,7 @@ const placeOrder = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    if (cashBackToggle === true){
+    if (cashBackToggle === true) {
       user.cashBackToggle = true
     }
 
@@ -67,9 +67,15 @@ const placeOrder = async (req, res) => {
     // Calculate cash back based on the total amount and the user's cashback toggle
     let cashBackToUse = 0;
     if (cashBackToggle && user.cashBackToggle === true) {
-      cashBackToUse = Math.min(user.cashBack, total)
+      if (user.cashBack >= total) {
+        cashBackToUse = total
+        total = 0
 
-    // Return the user's cashBackToggle to false so as to make it optional for the next order
+      } else {
+        cashBackToUse = Math.min(user.cashBack, total);
+      }
+
+      // Return the user's cashBackToggle to false so as to make it optional for the next order
       user.cashBackToggle = false;
     }
 
@@ -147,9 +153,9 @@ const placeOrder = async (req, res) => {
     res.status(201).json(response);
 
   } catch (error) {
-    res.status(500).json({ 
-      message: 'Failed to create order', 
-      error: error.message 
+    res.status(500).json({
+      message: 'Failed to create order',
+      error: error.message
     });
   }
 };
@@ -171,9 +177,9 @@ const getAllOrders = async (req, res) => {
 
     res.status(200).json(orders);
   } catch (error) {
-    res.status(500).json({ 
-      message: 'Failed to get orders', 
-      error: error.message 
+    res.status(500).json({
+      message: 'Failed to get orders',
+      error: error.message
     });
   }
 };

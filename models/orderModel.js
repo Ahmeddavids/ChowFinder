@@ -28,11 +28,12 @@ const orderSchema = new mongoose.Schema({
   },
   cashBackToggle: { 
     type: Boolean, 
-    // required: true 
+    default: false,
+    required: true 
   },
   orderDate: { 
     type: Date, 
-    default: () => new Date(Date.now() + 60 * 60 * 1000)
+    default: Date.now()
   }
 });
 

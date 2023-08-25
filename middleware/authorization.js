@@ -48,7 +48,7 @@ const authenticate = async (req, res, next) => {
     } catch (error) {
         if (error instanceof jwt.JsonWebTokenError) {
             return res.status(401).json({
-                message: "Action requires sign-in. Please log in to continue."
+                message: "Oops! Access denied. Your session has expired. Please sign in again."
             });
         }
         res.status(500).json({
