@@ -12,9 +12,9 @@ const morgan = require("morgan");
 
 const PORT = 1800;
 
+const app = express();
 app.use(cors({origin: "*"}));
 
-const app = express();
 app.use(morgan("dev"))
 app.use(express.json());
 app.use(fileUpload({
