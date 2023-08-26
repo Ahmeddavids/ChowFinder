@@ -27,7 +27,7 @@ const authenticate = async (req, res, next) => {
 
         if (isTokenRevoked) {
             return res.status(401).json({
-                message: "Oops! Access denied. Your session has expired. Please sign in again."
+                message: "Oops! Access denied. Your session has expired. Please sign in again. 1"
             });
         }
 
@@ -48,7 +48,7 @@ const authenticate = async (req, res, next) => {
     } catch (error) {
         if (error instanceof jwt.JsonWebTokenError) {
             return res.status(401).json({
-                message: "Oops! Access denied. Your session has expired. Please sign in again."
+                message: "Oops! Access denied. Your session has expired. Please sign in again. 2"
             });
         }
         res.status(500).json({

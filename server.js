@@ -8,11 +8,14 @@ const categoryRouter = require('./routes/categoryRouter')
 const fileUpload = require("express-fileupload");
 const cors = require('cors');
 const morgan = require("morgan");
+const bodyParser = require('body-parser');
 
 
 const PORT = 1800;
 
 const app = express();
+app.use(bodyParser.json({limit: '50mb'}))
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true }))
 app.use(cors({origin: "*"}));
 
 app.use(morgan("dev"))
