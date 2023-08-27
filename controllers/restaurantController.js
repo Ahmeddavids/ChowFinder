@@ -35,7 +35,7 @@ exports.newrestaurant = async (req, res) => {
           const salt = bcryptjs.genSaltSync(10);
           const hash = bcryptjs.hashSync(password, salt);
 
-          const image =await cloudinary.uploader.upload(req.files.profileImage.tempFilePath)
+          // const image =await cloudinary.uploader.upload(req.files.profileImage.tempFilePath)
 
           const restaurant = await restaurantModel.create({
         businessName: businessName.toUpperCase(),
@@ -45,7 +45,7 @@ exports.newrestaurant = async (req, res) => {
         phoneNumber, 
         password:hash,
         confirmPassword: hash,
-        profileImage: image.secure_url
+        // profileImage: image.secure_url
           });
           const token = await genToken(restaurant._id, "1d");
           console.log(token)
