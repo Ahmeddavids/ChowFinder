@@ -149,7 +149,7 @@ exports.newrestaurant = async (req, res) => {
       } 
       if (!checkPassword) {
         res.status(400).json({
-          message: "invalid Password, Please try again"
+          message: "Invalid Password, Please try again"
         });
       } else if (restaurant.isBlocked) {
         res.status(200).json({
