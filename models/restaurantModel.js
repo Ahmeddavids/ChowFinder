@@ -21,10 +21,10 @@ const restaurantSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-  // profileImage: {
-  //   type: String,
-  //   // require: true,
-  // },
+  profileImage: {
+    type: String,
+    // require: true,
+  },
   phoneNumber: {
     type: String,
     require: true,

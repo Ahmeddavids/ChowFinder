@@ -118,13 +118,6 @@ const removeFromCart = async (req, res) => {
       });
     }
 
-    // Check if the user's cart is empty
-    if (cart.items.length === 0) {
-      return res.status(404).json({
-        error: 'Cart is currently empty'
-      });
-    }
-
     // Check if the menu item is in the cart
     const existingItemIndex = cart.items.findIndex(item => item.menu.equals(menuItemId));
     if (existingItemIndex === -1) {
@@ -150,12 +143,6 @@ const removeFromCart = async (req, res) => {
 
     // Save the updated cart
     await cart.save();
-
-    if (cart.items.length === 0) {
-      return res.status(404).json({
-        message: 'Item removed from cart successfully, Your cart is now empty',
-      });
-    }
 
     return res.status(200).json({
       message: 'Item removed from cart successfully',
@@ -199,29 +186,26 @@ const deleteItemFroCart = async (req, res) => {
         error: 'Cart not found'
       });
     }
-
-    // Check if the user's cart is empty
-    if (cart.items.length === 0) {
+    if (cart.items.length === 0){
       return res.status(404).json({
-        error: 'Cart is currently empty'
+        message: 'Cart is currently empty'
       });
-    }
+    }    
 
     // Filter the item ID from the cart items menu
     cart.items = cart.items.filter((item) => item.menu.toString() !== menuItemId);
 
+    // Re calcutate the total amount and update the item total
     cart.grandTotal = cart.items.reduce((acc, item) => acc + item.itemTotal, 0);
+
+    if (cart.items.length === 0){
+      cart.restaurant = null
+    }
 
     // Save the updated cart
     await cart.save();
 
-    if (cart.items.length === 0) {
-      return res.status(404).json({
-        message: 'Item removed from cart successfully, Your cart is now empty',
-      });
-    }
-
-    return res.status(200).json({
+    res.status(200).json({
       message: 'Item deleted from cart successfully',
       cart
     });
@@ -233,6 +217,7 @@ const deleteItemFroCart = async (req, res) => {
     });
   }
 }
+
 
 
 // Get a user's cart
@@ -253,13 +238,6 @@ const getCart = async (req, res) => {
     if (!cart) {
       return res.status(404).json({
         error: 'Cart not found'
-      });
-    }
-
-    // Check if the user's cart is empty
-    if (cart.items.length === 0) {
-      return res.status(404).json({
-        error: 'Cart is currently empty'
       });
     }
 
