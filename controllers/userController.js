@@ -297,7 +297,7 @@ const userLogin = async (req, res) => {
       isAdmin: user.isAdmin,
       isSuperAdmin: user.isSuperAdmin
     },
-      process.env.JWT_SECRET, { expiresIn: "1 day" })
+      process.env.JWT_SECRET, { expiresIn: "1 min" })
 
     user.save()
 
