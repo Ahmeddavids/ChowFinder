@@ -199,7 +199,7 @@ exports.newrestaurant = async (req, res) => {
         const data = {
           email: email,
           subject,
-          message,
+         html:  message,
         };
         sendEmail(data);
         res.status(200).json({

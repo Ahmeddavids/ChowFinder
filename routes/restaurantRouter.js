@@ -26,7 +26,7 @@ router.get("/rest/getall", getAll);
 router.get("/rest/getone/:id", getOne);
 router.put("/rest/update-user/:restaurantId", userAuth, updaterestaurant);
 router.delete("/rest/delete-user/:userId", userAuth, deleterestaurant);
-router.get("/rest/forgot-password", forgotPassword);
+router.post("/rest/forgot-password", forgotPassword);
 router.get("/rest/resend-email-verification", resendEmailVerification);
 router.put("/rest/reset-password/:token", resetpassword);
 // router.get("/rest/make",searchlocation)
