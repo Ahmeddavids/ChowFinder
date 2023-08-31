@@ -15,6 +15,7 @@ const {
 } = require("../controllers/restaurantController");
 
 const { isAdmin, userAuth } = require("../middleware/authmiddleware");
+const { getAllRestOrders } = require("../controllers/orderController");
 const router = express.Router();
 
 router.post("/rest/signup", newrestaurant);
@@ -29,5 +30,5 @@ router.delete("/rest/delete-user/:userId", userAuth, deleterestaurant);
 router.post("/rest/forgot-password", forgotPassword);
 router.get("/rest/resend-email-verification", resendEmailVerification);
 router.put("/rest/reset-password/:token", resetpassword);
-// router.get("/rest/make",searchlocation)
+router.get("/rest/get-all-orders",userAuth, getAllRestOrders)
 module.exports = router;

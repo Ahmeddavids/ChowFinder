@@ -143,12 +143,12 @@ exports.newrestaurant = async (req, res) => {
         checkPassword = bcryptjs.compareSync(password, restaurant.password);
       }
       if (!restaurant) {
-        res.status(400).json({
+        return res.status(400).json({
           message: "User not found",
         });
       } 
       if (!checkPassword) {
-        res.status(400).json({
+        return res.status(400).json({
           message: "Invalid Password, Please try again"
         });
       } else if (restaurant.isBlocked) {

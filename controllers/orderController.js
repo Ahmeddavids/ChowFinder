@@ -179,9 +179,32 @@ const getAllOrders = async (req, res) => {
   }
 };
 
+const getAllRestOrders = async (req, res) => {
+  try {
+    const userId  = req.user._id;
+
+    // Find the user from the database
+    const user = await restaurantModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Find all orders for the user
+    const orders = await orderModel.find({ _id: { $in: user.orders } }).sort({ orderDate: -1 }).populate("items");
+
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Failed to get orders',
+      error: error.message
+    });
+  }
+};
+
 
 
 module.exports = {
   placeOrder,
-  getAllOrders
+  getAllOrders,
+  getAllRestOrders
 };
