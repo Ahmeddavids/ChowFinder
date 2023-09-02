@@ -185,7 +185,7 @@ const getAllRestMenu = async (req, res) => {
     }
 
     // Find all menu for the restaurant
-    const menu = await menuModel.find({ _id: { $in: restaurant.menus } })
+    const menu = await menuModel.find({ _id: { $in: restaurant.menus } }).populate('category')
 
     res.status(200).json(menu);
   } catch (error) {
