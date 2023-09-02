@@ -6,7 +6,8 @@ const {
     getAllMenu,
     updateMenu,
     deleteMenu,
-    getAllMenuInDatabase } = require("../controllers/menuController")
+    getAllMenuInDatabase, 
+    getAllRestMenu} = require("../controllers/menuController")
     const { isAdmin, userAuth,isRole } = require("../middleware/authmiddleware")
 
 router.route('/:id/create-menu/:categoryId').post(userAuth,isRole, createMenu)
@@ -15,6 +16,7 @@ router.route('/menu/getall/:restId').get(getAllMenu )
 router.route('/menu/getall/').get(getAllMenuInDatabase )
 router.route('/menu/update/:id').put(updateMenu )
 router.route('/menu/delete').delete(deleteMenu )
+router.route('/rest/get-all-menu').get(userAuth, getAllRestMenu)
 
 
 

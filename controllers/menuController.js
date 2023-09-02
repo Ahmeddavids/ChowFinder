@@ -172,12 +172,37 @@ const deleteMenu = async (req,res)=>{
         })
     }
 }
+
+// Get all menu for by a particular restaurant
+const getAllRestMenu = async (req, res) => {
+  try {
+    const restauntId  = req.user._id;
+
+    // Find the restaurant from the database
+    const restaurant = await restaurantModel.findById(restauntId);
+    if (!restaurant) {
+      return res.status(404).json({ message: 'restaurant not found' });
+    }
+
+    // Find all menu for the restaurant
+    const menu = await menuModel.find({ _id: { $in: restaurant.menus } })
+
+    res.status(200).json(menu);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Failed to get menu',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
     createMenu,
     getOneMenue,
     getAllMenu,
     updateMenu,
     deleteMenu,
-    getAllMenuInDatabase
+    getAllMenuInDatabase,
+    getAllRestMenu
 }
 

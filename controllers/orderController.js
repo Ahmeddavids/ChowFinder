@@ -181,16 +181,16 @@ const getAllOrders = async (req, res) => {
 
 const getAllRestOrders = async (req, res) => {
   try {
-    const userId  = req.user._id;
+    const restaurantId  = req.user._id;
 
-    // Find the user from the database
-    const user = await restaurantModel.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    // Find the restaurant from the database
+    const restaurant = await restaurantModel.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ message: 'restaurant not found' });
     }
 
-    // Find all orders for the user
-    const orders = await orderModel.find({ _id: { $in: user.orders } }).sort({ orderDate: -1 }).populate("items");
+    // Find all orders for the restaurant
+    const orders = await orderModel.find({ _id: { $in: restaurant.orders } }).sort({ orderDate: -1 }).populate("items");
 
     res.status(200).json(orders);
   } catch (error) {
