@@ -191,10 +191,10 @@ exports.newrestaurant = async (req, res) => {
       //create a link with the reset password link and send it to email
       const restaurant = await restaurantModel.findOne({ email });
       if (restaurant) {
-        const subject = "forgotten password";
+        const subject = "Forgott password";
         const token = await genToken(restaurant._id, "20m");
         // for better security practice a unique token should be sent to reset password instead of user._id
-        const link = `https://chowfinderapp.onrender.com/#/resetpassword/${token}`;
+        const link = `https://chowfinderapp.onrender.com/#/Restresetpassword/${token}`;
         const message = `click the ${link} to reset your password`;
         const data = {
           email: email,
