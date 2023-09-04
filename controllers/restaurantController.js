@@ -51,7 +51,7 @@ exports.newrestaurant = async (req, res) => {
           console.log(token)
 
           const subject = "New restaurant";
-          const link = `${req.protocol}://${req.get("host")}/rest/verify/${token}`;
+          const link = `https://chowfinderapp.onrender.com/#/verifyPartner/${token}`;
           const html = await mailTemplate(link, restaurant.businessName);
           const mail = {
           email: email,
@@ -105,7 +105,7 @@ exports.newrestaurant = async (req, res) => {
       if (restaurant && !restaurant.isVerified) {
         const token = await genToken(restaurant._id, "1d");
         const subject = "New restaurant";
-        const link = `${req.protocol}://${req.get("host")}/rest/verify/${token}`;
+        const link = `https://chowfinderapp.onrender.com/#/verifyPartner/${token}`;
         const html = await mailTemplate(link, restaurant.businessName);
           const mail = {
           email: email,
@@ -194,7 +194,7 @@ exports.newrestaurant = async (req, res) => {
         const subject = "forgotten password";
         const token = await genToken(restaurant._id, "20m");
         // for better security practice a unique token should be sent to reset password instead of user._id
-        const link = `${req.protocol}://${req.get("host")}/reset-password/${token}`;
+        const link = `https://chowfinderapp.onrender.com/#/resetpassword/${token}`;
         const message = `click the ${link} to reset your password`;
         const data = {
           email: email,
