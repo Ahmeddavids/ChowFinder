@@ -195,11 +195,11 @@ exports.newrestaurant = async (req, res) => {
         const token = await genToken(restaurant._id, "20m");
         // for better security practice a unique token should be sent to reset password instead of user._id
         const link = `https://chowfinderapp.onrender.com/#/Restresetpassword/${token}`;
-        const message = `click the ${link} to reset your password`;
+        const html = `click the ${link} to reset your password`;
         const data = {
           email: email,
           subject,
-         html:  message,
+         html,
         };
         sendEmail(data);
         res.status(200).json({

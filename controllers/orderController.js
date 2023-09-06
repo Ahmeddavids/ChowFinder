@@ -3,7 +3,7 @@ const restaurantModel = require('../models/restaurantModel');
 const menuModel = require('../models/menuModel');
 const cartModel = require('../models/cartModel')
 const orderModel = require('../models/orderModel');
-const { orderMailTemplate } = require('../middleware/mailTemplate');
+const { orderMailTemplate, restaurantOrderMailTemplate } = require('../middleware/mailTemplate');
 const { sendEmail } = require('../middleware/sendMail');
 
 
@@ -129,6 +129,15 @@ const placeOrder = async (req, res) => {
       html,
     };
     sendEmail(mail);
+
+    const restSubject = "New Order Placed";
+    const html1 = await restaurantOrderMailTemplate(user.fullName, user.email, userOrder._id, userOrder.orderDate, itemNames, userOrder.total);
+    const restMail = {
+      email: user.email,
+      subject: restSubject,
+      html: html1,
+    };
+    sendEmail(restMail);
 
     const response = {
       message: `Order successfully processed, Your cashback for this order is ${cashBackAmount}`,
