@@ -286,7 +286,7 @@ function orderMailTemplate(fullname, orderId, orderDate, items, total) {
 }
 
 
-function restaurantOrderMailTemplate(fullname, email, orderId, orderDate, items, total) {
+function restaurantOrderMailTemplate(fullname, email, address, orderId, orderDate, items, total) {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -359,6 +359,7 @@ function restaurantOrderMailTemplate(fullname, email, orderId, orderDate, items,
             ${items.map(item => `<li>${item}</li>`).join('')}
           </ul>
           <p><strong>Total Amount:</strong> &#8358; ${total}</p>
+          <p><strong>Delivery Address:</strong> ${address}</p>
         </div>
         <p>Please prepare the order and contact the customer for delivery or pickup details.</p>
       </div>
@@ -370,6 +371,7 @@ function restaurantOrderMailTemplate(fullname, email, orderId, orderDate, items,
   </html>
   `;
 }
+
 
 
 

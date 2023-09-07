@@ -131,9 +131,9 @@ const placeOrder = async (req, res) => {
     sendEmail(mail);
 
     const restSubject = "New Order Placed";
-    const html1 = await restaurantOrderMailTemplate(user.fullName, user.email, userOrder._id, userOrder.orderDate, itemNames, userOrder.total);
+    const html1 = await restaurantOrderMailTemplate(user.fullName, user.email, customerAddress, userOrder._id, userOrder.orderDate, itemNames, userOrder.total);
     const restMail = {
-      email: user.email,
+      email: restaurant.email,
       subject: restSubject,
       html: html1,
     };
